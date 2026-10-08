@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Abonebal — مطور بوتات Discord احترافية" />
+<meta name="theme-color" content="#8a2be2" />
+<title>Abonebal — Discord Bot Developer</title>
+
+<!-- Favicon -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%238a2be2'/><stop offset='100%25' stop-color='%235865f2'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text y='.9em' font-size='68' text-anchor='middle' x='50'>⚔</text></svg>" />
+
+<!-- ═══ CSS — order matters ═══ -->
+<link rel="stylesheet" href="assets/css/variables.css" />
+<link rel="stylesheet" href="assets/css/reset.css" />
+<link rel="stylesheet" href="assets/css/animations.css" />
+<link rel="stylesheet" href="assets/css/cursor.css" />
+<link rel="stylesheet" href="assets/css/navbar.css" />
+<link rel="stylesheet" href="assets/css/sidebar.css" />
+<link rel="stylesheet" href="assets/css/fullpage.css" />
+<link rel="stylesheet" href="assets/css/sections.css" />
+<link rel="stylesheet" href="assets/css/components.css" />
+<link rel="stylesheet" href="assets/css/contact.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     GLOBAL FIXED ELEMENTS
+══════════════════════════════════════════ -->
+<div id="progress-bar"></div>
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- Background -->
+<canvas id="bg-canvas"></canvas>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+<div class="bg-glow bg-glow-3"></div>
+<div class="grid-bg"></div>
+
+<!-- Dot navigation -->
+<div id="dot-nav"></div>
+
+<!-- Panel arrows -->
+<button class="panel-arrow" id="arrow-up"   aria-label="Previous">▲</button>
+<button class="panel-arrow" id="arrow-down" aria-label="Next">▼</button>
+
+<!-- Mobile -->
+<button id="mob-toggle" aria-label="Menu">☰</button>
+<div id="sidebar-overlay"></div>
+
+<!-- ══════════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════════ -->
+<nav id="sidebar">
+
+  <div class="sb-header">
+    <div class="sb-logo-icon">
+      <span class="sb-logo-fallback">⚔️</span>
+    </div>
+    <div class="sb-logo-text">
+      <div class="sb-logo-name">Abonebal</div>
+      <div class="sb-logo-sub">Bot Developer</div>
+    </div>
+    <button class="sb-toggle" id="sb-toggle" aria-label="Collapse">‹</button>
+  </div>
+
+  <div class="sb-nav">
+    <div class="sb-section-label" data-ar="التنقل" data-en="Navigation">التنقل</div>
+
+    <div class="sb-item active" data-section="hero" tabindex="0" role="button">
+      <div class="sb-item-bg"></div>
+      <div class="sb-item-cut-top"></div>
+      <div class="sb-item-cut-bot"></div>
+      <div class="sb-item-icon">🏠</div>
+      <div class="sb-item-label" data-ar="الرئيسية" data-en="Home">الرئيسية</div>
+      <div class="sb-tooltip" data-ar="الرئيسية" data-en="Home">الرئيسية</div>
+    </div>
+
+    <div class="sb-item" data-section="about" tabindex="0" role="button">
+      <div class="sb-item-bg"></div>
+      <div class="sb-item-cut-top"></div>
+      <div class="sb-item-cut-bot"></div>
+      <div class="sb-item-icon">👤</div>
+      <div class="sb-item-label" data-ar="عني" data-en="About">عني</div>
+      <div class="sb-tooltip" data-ar="عني" data-en="About">عني</div>
+    </div>
+
+    <div class="sb-item" data-section="projects" tabindex="0" role="button">
+      <div class="sb-item-bg"></div>
+      <div class="sb-item-cut-top"></div>
+      <div class="sb-item-cut-bot"></div>
+      <div class="sb-item-icon">📁</div>
+      <div class="sb-item-label" data-ar="المشاريع" data-en="Projects">المشاريع</div>
+      <div class="sb-tooltip" data-ar="المشاريع" data-en="Projects">المشاريع</div>
+    </div>
+
+    <div class="sb-item" data-section="services" tabindex="0" role="button">
+      <div class="sb-item-bg"></div>
+      <div class="sb-item-cut-top"></div>
+      <div class="sb-item-cut-bot"></div>
+      <div class="sb-item-icon">⚙️</div>
+      <div class="sb-item-label" data-ar="الخدمات" data-en="Services">الخدمات</div>
+      <div class="sb-tooltip" data-ar="الخدمات" data-en="Services">الخدمات</div>
+    </div>
+
+    <div class="sb-item" data-section="contact" tabindex="0" role="button">
+      <div class="sb-item-bg"></div>
+      <div class="sb-item-cut-top"></div>
+      <div class="sb-item-cut-bot"></div>
+      <div class="sb-item-icon">✉️</div>
+      <div class="sb-item-label" data-ar="التواصل" data-en="Contact">التواصل</div>
+      <div class="sb-tooltip" data-ar="التواصل" data-en="Contact">التواصل</div>
+    </div>
+
+    <div class="sb-sep"></div>
+    <div class="sb-highlight"></div>
+  </div>
+
+  <div class="sb-footer">
+    <div class="sb-footer-inner">
+      <div class="sb-user-row">
+        <div class="sb-user-avatar">
+          <span>⚔️</span>
+        </div>
+        <div class="sb-user-info">
+          <div class="sb-user-name">Abonebal</div>
+          <div class="sb-user-role" data-ar="مطور بوتات" data-en="Bot Developer">مطور بوتات</div>
+        </div>
+        <div class="sb-footer-toggle">▲</div>
+      </div>
+      <div class="sb-controls">
+        <button class="sb-ctrl-btn" id="theme-btn" title="Toggle Theme"  aria-label="Toggle theme">🌙</button>
+        <button class="sb-ctrl-btn" id="lang-btn"  title="Toggle Language" aria-label="Toggle language">🌐 EN</button>
+      </div>
+    </div>
+  </div>
+
+</nav>
+
+<!-- ══════════════════════════════════════════
+     MAIN
+══════════════════════════════════════════ -->
+<div id="main">
+
+  <!-- ── NAVBAR ── -->
+  <nav id="navbar" role="navigation" aria-label="Top navigation">
+    <div class="nb-brand">
+      Abonebal <span data-ar="بورتفوليو" data-en="portfolio">بورتفوليو</span>
+    </div>
+
+    <div class="nb-links" role="list">
+      <button class="nb-link active" data-section="hero"     role="listitem">🏠 <span data-ar="الرئيسية" data-en="Home">الرئيسية</span></button>
+      <button class="nb-link"        data-section="about"    role="listitem">👤 <span data-ar="عني"       data-en="About">عني</span></button>
+      <button class="nb-link"        data-section="projects" role="listitem">📁 <span data-ar="المشاريع" data-en="Projects">المشاريع</span></button>
+      <button class="nb-link"        data-section="services" role="listitem">⚙️ <span data-ar="الخدمات"  data-en="Services">الخدمات</span></button>
+      <button class="nb-link"        data-section="contact"  role="listitem">✉️ <span data-ar="التواصل"  data-en="Contact">التواصل</span></button>
+    </div>
+
+    <div class="nb-right">
+      <div class="nb-search">
+        <span class="nb-search-icon">🔍</span>
+        <input type="text" id="nb-search-input"
+          data-ar-placeholder="ابحث عن مشروع..."
+          data-en-placeholder="Search projects..."
+          placeholder="ابحث عن مشروع..."
+          aria-label="Search projects" />
+      </div>
+
+      <div class="nb-visitors" title="Visitor count">
+        <span class="eye-icon"></span>👁️</span>
+        <strong id="visitor-count">...</strong>
+      </div>
+
+      <button class="nb-btn" id="nb-theme-btn" aria-label="Toggle theme">🌙</button>
+      <button class="nb-btn" id="nb-lang-btn"  aria-label="Toggle language">EN</button>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════
+       PANELS (full-page scroll)
+  ══════════════════════════════════════════ -->
+  <div id="panels">
+
+    <!-- ── PANEL 1: HERO ── -->
+    <section class="panel active" id="hero-panel" data-panel="hero" aria-label="Hero">
+      <div class="panel-inner" style="text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - var(--nb-h))">
+
+        <div class="hero-badge">
+          <span class="dot-live"></span>
+          <span data-ar="مطور بوتات Discord — متاح للعمل" data-en="Discord Bot Developer — Available">مطور بوتات Discord — متاح للعمل</span>
+        </div>
+
+        <h1 class="hero-name">Abonebal</h1>
+
+        <div class="hero-typewriter">
+          <span class="tw-prefix" data-ar="أنا" data-en="I'm a">أنا</span>
+          <span id="tw-text"></span>
+          <span class="tw-cursor"></span>
+        </div>
+
+        <p class="hero-bio" id="hero-bio"></p>
+
+        <div class="hero-stats" id="hero-stats"></div>
+
+        <div class="hero-cta">
+          <button class="btn btn-primary"   onclick="FullPage.goTo('projects')">
+            📁 <span data-ar="استكشف مشاريعي" data-en="View Projects">استكشف مشاريعي</span>
+          </button>
+          <button class="btn btn-secondary" onclick="FullPage.goTo('contact')">
+            ✉️ <span data-ar="تواصل معي" data-en="Contact Me">تواصل معي</span>
+          </button>
+        </div>
+
+        <!-- Terminal whoami -->
+        <div class="hero-terminal" id="hero-terminal"></div>
+
+      </div>
+    </section>
+
+    <!-- ── PANEL 2: ABOUT ── -->
+    <section class="panel" id="about-panel" data-panel="about" aria-label="About">
+      <div class="panel-inner">
+
+        <div class="section-head reveal">
+          <div class="section-tag" data-ar="عني" data-en="About Me">عني</div>
+          <h2 class="section-title" data-ar="من أنا؟" data-en="Who am I?">من أنا؟</h2>
+          <p class="section-sub"
+            data-ar="مطور متخصص في بناء بوتات Discord الاحترافية وأنظمة إدارة المجتمعات."
+            data-en="Developer specialized in professional Discord bots and community management systems.">
+            مطور متخصص في بناء بوتات Discord الاحترافية وأنظمة إدارة المجتمعات.
+          </p>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-card reveal">
+            <div class="about-avatar"><span>⚔️</span></div>
+            <p class="about-bio-text" id="about-bio"></p>
+            <div class="about-exp-badge">
+              ⭐ <span id="about-exp"></span>
+            </div>
+          </div>
+          <div class="about-card reveal" style="transition-delay:.12s">
+            <div class="skills-title" data-ar="المهارات التقنية" data-en="Technical Skills">المهارات التقنية</div>
+            <div class="skills-grid" id="skills-container"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── PANEL 3: PROJECTS ── -->
+    <section class="panel" id="projects-panel" data-panel="projects" aria-label="Projects">
+      <div class="panel-inner">
+
+        <div class="section-head reveal">
+          <div class="section-tag" data-ar="المشاريع" data-en="Projects">المشاريع</div>
+          <h2 class="section-title">
+            <span data-ar="أحدث مشاريعي" data-en="My Projects">أحدث مشاريعي</span>
+            <span id="stat-proj-count" style="font-size:16px;font-weight:400;color:var(--txt3);margin-right:10px"></span>
+          </h2>
+          <p class="section-sub"
+            data-ar="جلب تلقائي من GitHub — يتحدث عند رفع ملف جديد"
+            data-en="Auto-fetched from GitHub">
+            جلب تلقائي من GitHub — يتحدث عند رفع ملف جديد
+          </p>
+        </div>
+
+        <div class="proj-controls reveal">
+          <div class="search-box">
+            <span class="s-icon">🔍</span>
+            <input type="text" id="proj-search-2"
+              data-ar-placeholder="ابحث..."
+              data-en-placeholder="Search..."
+              placeholder="ابحث..." />
+          </div>
+          <div class="view-btns">
+            <button class="vbtn active" data-view="grid" aria-label="Grid view">⊞</button>
+            <button class="vbtn"        data-view="list" aria-label="List view">☰</button>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="proj-refresh">
+            🔄 <span data-ar="تحديث" data-en="Refresh">تحديث</span>
+          </button>
+        </div>
+
+        <div id="proj-grid"></div>
+
+      </div>
+    </section>
+
+    <!-- ── PANEL 4: SERVICES ── -->
+    <section class="panel" id="services-panel" data-panel="services" aria-label="Services">
+      <div class="panel-inner">
+
+        <div class="section-head reveal">
+          <div class="section-tag" data-ar="الخدمات" data-en="Services">الخدمات</div>
+          <h2 class="section-title" data-ar="ماذا أقدم؟" data-en="What I Offer">ماذا أقدم؟</h2>
+          <p class="section-sub"
+            data-ar="خدمات تطوير متخصصة لبوتات Discord وأنظمة المجتمعات"
+            data-en="Specialized Discord bot development services">
+            خدمات تطوير متخصصة لبوتات Discord وأنظمة المجتمعات
+          </p>
+        </div>
+
+        <div class="services-grid" id="services-grid"></div>
+
+      </div>
+    </section>
+
+    <!-- ── PANEL 5: CONTACT ── -->
+    <section class="panel" id="contact-panel" data-panel="contact" aria-label="Contact">
+      <div class="panel-inner">
+
+        <!-- Banner + Avatar Hero -->
+        <div class="contact-hero" id="contact-hero">
+          <!-- Rendered by contact.js -->
+          <div class="contact-banner-placeholder"></div>
+        </div>
+
+        <!-- Profile Info: name, status, badges -->
+        <div class="contact-profile-info" id="contact-profile-info">
+          <!-- Rendered by contact.js -->
+        </div>
+
+        <!-- Cards Section -->
+        <div class="contact-cards-section">
+          <div class="contact-section-label" data-ar="تواصل معي عبر" data-en="Reach me on">تواصل معي عبر</div>
+          <div class="contact-cards" id="contact-cards">
+            <!-- Rendered by contact.js -->
+            <div style="color:var(--txt3);font-size:13px;padding:20px 0">جاري التحميل...</div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+          <div class="footer-name">Abonebal</div>
+          <div style="font-size:11px;color:var(--txt3);margin-top:5px"
+            data-ar="مطور بوتات Discord — جميع الحقوق محفوظة"
+            data-en="Discord Bot Developer — All rights reserved">
+            مطور بوتات Discord — جميع الحقوق محفوظة
+          </div>
+          <div class="footer-copy">© 2026 <span>Abonebal</span></div>
+        </footer>
+
+      </div>
+    </section>
+
+  </div><!-- /panels -->
+</div><!-- /main -->
+
+<!-- ── MODAL OVERLAY (outside main, fixed) ── -->
+<div id="contact-modal-overlay">
+  <div id="contact-modal-body"></div>
+</div>
+
+<!-- ── TOAST ── -->
+<div id="toast" role="alert" aria-live="polite"></div>
+
+<!-- ══════════════════════════════════════════
+     SCRIPTS — config first, then modules, then app
+══════════════════════════════════════════ -->
+<!-- Config -->
+<script src="config/profile.js"></script>
+<script src="config/links.js"></script>
+
+<!-- Modules (order matters — dependencies first) -->
+<script src="assets/js/theme.js"></script>
+<script src="assets/js/lang.js"></script>
+<script src="assets/js/cursor.js"></script>
+<script src="assets/js/particles.js"></script>
+<script src="assets/js/utils.js"></script>
+<script src="assets/js/typewriter.js"></script>
+<script src="assets/js/visitors.js"></script>
+<script src="assets/js/projects.js"></script>
+<script src="assets/js/render.js"></script>
+<script src="assets/js/fullpage.js"></script>
+<script src="assets/js/sidebar.js"></script>
+<script src="assets/js/navbar.js"></script>
+
+<script src="assets/js/contact.js"></script>
+
+<!-- Entry point — always last -->
+<script src="assets/js/app.js"></script>
+
+<!-- Inline patch: wire about-exp from config -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // about exp badge
+  const expEl = document.getElementById('about-exp');
+  if (expEl && PROFILE) expEl.textContent = Lang.t(PROFILE.experience);
+
+  // about bio
+  const bioEl = document.getElementById('about-bio');
+  if (bioEl && PROFILE) bioEl.textContent = Lang.t(PROFILE.bio);
+});
+</script>
+
+</body>
+</html>

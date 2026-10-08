@@ -1,0 +1,638 @@
+/* ═══════════════════════════════════════════════════
+   contact.css — Contact Panel: Banner, Cards, Modal
+   ═══════════════════════════════════════════════════ */
+
+/* ── Panel layout ── */
+#contact-panel .panel-inner {
+  padding: 0;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* ════════════════════════════════════════════════════
+   PROFILE HERO — Banner + Avatar
+════════════════════════════════════════════════════ */
+.contact-hero {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+/* Banner */
+.contact-banner {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.contact-banner-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg,
+    rgba(138,43,226,0.35) 0%,
+    rgba(88,101,242,0.25) 40%,
+    rgba(0,212,255,0.15) 100%);
+  position: relative;
+  overflow: hidden;
+}
+/* Animated grid on placeholder */
+.contact-banner-placeholder::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(138,43,226,0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(138,43,226,0.08) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: banner-shift 20s linear infinite;
+}
+@keyframes banner-shift {
+  from { background-position: 0 0; }
+  to   { background-position: 40px 40px; }
+}
+
+/* Gradient fade at bottom */
+.contact-hero::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, var(--bg));
+  pointer-events: none;
+}
+
+/* Avatar circle */
+.contact-avatar-wrap {
+  position: absolute;
+  bottom: -48px; left: 44px;
+  z-index: 2;
+}
+.contact-avatar {
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  box-shadow:
+    0 0 0 3px var(--bg),
+    0 0 20px rgba(138,43,226,0.5),
+    0 0 40px rgba(138,43,226,0.2);
+  background: var(--bg2);
+}
+.contact-avatar-placeholder {
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px;
+  box-shadow:
+    0 0 0 3px var(--bg),
+    0 0 20px rgba(138,43,226,0.5);
+}
+
+/* Status dot on avatar */
+.contact-status-dot {
+  position: absolute;
+  bottom: 4px; right: 4px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 3px solid var(--bg);
+  background: #747f8d;
+}
+.contact-status-dot.online  { background: #57f287; box-shadow: 0 0 8px rgba(87,242,135,0.8); }
+.contact-status-dot.idle    { background: #f0a500; box-shadow: 0 0 8px rgba(240,165,0,0.8); }
+.contact-status-dot.dnd     { background: #ed4245; box-shadow: 0 0 8px rgba(237,66,69,0.8); }
+.contact-status-dot.offline { background: #747f8d; }
+
+/* ── Profile info row ── */
+.contact-profile-info {
+  padding: 60px 44px 24px;
+  display: flex; align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.contact-profile-names {
+  display: flex; flex-direction: column; gap: 3px;
+}
+.contact-display-name {
+  font-size: 22px; font-weight: 900;
+  color: var(--txt); line-height: 1.2;
+}
+.contact-username {
+  font-size: 13px; color: var(--txt3);
+  font-family: var(--font-mono);
+}
+.contact-custom-status {
+  font-size: 12px; color: var(--txt2);
+  margin-top: 4px; max-width: 320px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Badges row */
+.contact-badges {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-top: 8px;
+}
+.contact-badge {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 10px;
+  border-radius: 50px;
+  background: rgba(138,43,226,0.12);
+  font-size: 11px; font-weight: 600;
+  color: var(--purple-l);
+  white-space: nowrap;
+}
+.contact-badge .badge-icon { font-size: 13px; }
+
+/* ════════════════════════════════════════════════════
+   CARDS GRID
+════════════════════════════════════════════════════ */
+.contact-cards-section {
+  padding: 0 44px 32px;
+  flex: 1;
+}
+.contact-section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--txt3);
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.contact-section-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(138,43,226,0.2), transparent);
+}
+
+.contact-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* ── Individual card — glassmorphism ── */
+.ccard {
+  position: relative;
+  border-radius: 18px;
+  padding: 22px 20px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform .25s cubic-bezier(.4,0,.2,1),
+              box-shadow .25s;
+  /* Glass */
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  /* Glow instead of border */
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 8px 32px rgba(0,0,0,0.3);
+}
+.ccard:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.09),
+    0 16px 48px rgba(0,0,0,0.4),
+    0 0 30px var(--ccard-glow, rgba(138,43,226,0.2));
+}
+
+/* Subtle colored glow behind card */
+.ccard::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(
+    circle at 30% 30%,
+    var(--ccard-color, rgba(138,43,226,0.08)) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+/* Platform icon */
+.ccard-icon {
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  margin-bottom: 14px;
+  background: var(--ccard-color, rgba(138,43,226,0.15));
+  box-shadow: 0 4px 14px var(--ccard-glow, rgba(138,43,226,0.25));
+  position: relative; z-index: 1;
+  transition: transform .2s;
+}
+.ccard:hover .ccard-icon { transform: scale(1.1) rotate(-4deg); }
+
+.ccard-platform {
+  font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ccard-accent, var(--purple-l));
+  margin-bottom: 5px;
+  position: relative; z-index: 1;
+}
+.ccard-name {
+  font-size: 15px; font-weight: 700; color: var(--txt);
+  position: relative; z-index: 1;
+  margin-bottom: 4px;
+}
+.ccard-sub {
+  font-size: 12px; color: var(--txt3);
+  position: relative; z-index: 1;
+}
+
+/* Live indicator */
+.ccard-live {
+  position: absolute; top: 14px; right: 14px;
+  display: flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 700;
+  color: var(--green);
+}
+.ccard-live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  animation: live-pulse 2s ease-in-out infinite;
+}
+@keyframes live-pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: .5; transform: scale(.7); }
+}
+
+/* Activity bar on Discord card */
+.ccard-activity {
+  margin-top: 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.2);
+  display: flex; align-items: center; gap: 8px;
+  position: relative; z-index: 1;
+}
+.ccard-activity-img {
+  width: 32px; height: 32px; border-radius: 6px;
+  object-fit: cover; flex-shrink: 0;
+  background: rgba(138,43,226,0.2);
+}
+.ccard-activity-info { min-width: 0; }
+.ccard-activity-name {
+  font-size: 11px; font-weight: 700; color: var(--txt);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ccard-activity-detail {
+  font-size: 10px; color: var(--txt3);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* GitHub stats mini */
+.ccard-stats {
+  display: flex; gap: 10px; margin-top: 12px;
+  position: relative; z-index: 1;
+}
+.ccard-stat {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 2px;
+}
+.ccard-stat-num {
+  font-size: 15px; font-weight: 800;
+  color: var(--ccard-accent, var(--purple-l));
+}
+.ccard-stat-lbl {
+  font-size: 10px; color: var(--txt3);
+}
+
+/* ════════════════════════════════════════════════════
+   MODAL
+════════════════════════════════════════════════════ */
+#contact-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 800;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .3s;
+}
+#contact-modal-overlay.open {
+  opacity: 1; pointer-events: all;
+}
+
+.contact-modal {
+  width: 100%; max-width: 460px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: rgba(10,10,24,0.85);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.07),
+    0 24px 80px rgba(0,0,0,0.7),
+    0 0 60px var(--modal-glow, rgba(138,43,226,0.15));
+  transform: scale(.94) translateY(16px);
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+}
+#contact-modal-overlay.open .contact-modal {
+  transform: scale(1) translateY(0);
+}
+
+/* Modal banner */
+.modal-banner {
+  width: 100%; height: 120px;
+  object-fit: cover; display: block;
+}
+.modal-banner-placeholder {
+  width: 100%; height: 120px;
+  background: linear-gradient(135deg,
+    var(--modal-color1, rgba(138,43,226,.4)),
+    var(--modal-color2, rgba(88,101,242,.3)));
+  position: relative; overflow: hidden;
+}
+.modal-banner-placeholder::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Modal avatar */
+.modal-avatar-wrap {
+  position: relative;
+  margin: -44px 0 0 24px;
+  width: fit-content;
+}
+.modal-avatar {
+  width: 80px; height: 80px; border-radius: 50%;
+  object-fit: cover;
+  box-shadow:
+    0 0 0 4px rgba(10,10,24,0.9),
+    0 0 20px var(--modal-glow, rgba(138,43,226,0.4));
+  background: var(--bg2);
+}
+.modal-avatar-placeholder {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px;
+  box-shadow: 0 0 0 4px rgba(10,10,24,0.9), 0 0 20px var(--modal-glow, rgba(138,43,226,0.4));
+}
+.modal-status-dot {
+  position: absolute; bottom: 3px; right: 3px;
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 3px solid rgba(10,10,24,0.9);
+  background: #747f8d;
+}
+.modal-status-dot.online  { background: #57f287; box-shadow: 0 0 8px rgba(87,242,135,.8); }
+.modal-status-dot.idle    { background: #f0a500; box-shadow: 0 0 8px rgba(240,165,0,.8); }
+.modal-status-dot.dnd     { background: #ed4245; box-shadow: 0 0 8px rgba(237,66,69,.8); }
+
+/* Modal body */
+.modal-body {
+  padding: 12px 24px 24px;
+}
+.modal-display-name {
+  font-size: 20px; font-weight: 900; color: var(--txt);
+  margin-bottom: 2px; line-height: 1.2;
+}
+.modal-username {
+  font-size: 12px; color: var(--txt3); font-family: var(--font-mono);
+  margin-bottom: 10px;
+}
+.modal-custom-status {
+  font-size: 13px; color: var(--txt2);
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+  margin-bottom: 14px;
+}
+
+/* Modal badges */
+.modal-badges {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.modal-badge {
+  display: flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 50px;
+  background: rgba(138,43,226,0.12);
+  font-size: 11px; font-weight: 600; color: var(--purple-l);
+}
+
+/* Modal divider */
+.modal-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+  margin: 14px 0;
+}
+
+/* Modal info rows */
+.modal-info-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 10px; font-size: 13px;
+}
+.modal-info-icon { font-size: 15px; flex-shrink: 0; color: var(--txt3); }
+.modal-info-label { color: var(--txt3); font-size: 11px; }
+.modal-info-value { color: var(--txt); font-weight: 600; }
+
+/* Activity in modal */
+.modal-activity {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.04);
+  margin-bottom: 16px;
+}
+.modal-activity-img {
+  width: 44px; height: 44px; border-radius: 8px;
+  object-fit: cover; flex-shrink: 0;
+  background: rgba(138,43,226,0.2);
+}
+.modal-activity-name { font-size: 13px; font-weight: 700; color: var(--txt); }
+.modal-activity-detail { font-size: 11px; color: var(--txt3); margin-top: 2px; }
+
+/* GitHub stats in modal */
+.modal-gh-stats {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 10px; margin-bottom: 16px;
+}
+.modal-gh-stat {
+  text-align: center;
+  padding: 10px 8px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.04);
+}
+.modal-gh-stat-num {
+  font-size: 18px; font-weight: 900;
+  color: var(--cta-color, var(--purple-l));
+}
+.modal-gh-stat-lbl { font-size: 10px; color: var(--txt3); margin-top: 2px; }
+
+/* CTA button — full glass */
+.modal-cta {
+  width: 100%;
+  padding: 13px;
+  border-radius: 14px;
+  font-size: 14px; font-weight: 700;
+  font-family: var(--font);
+  cursor: pointer; border: none;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  color: #fff;
+  background: var(--cta-bg, linear-gradient(135deg, var(--purple), var(--blue)));
+  box-shadow: 0 6px 20px var(--cta-shadow, rgba(138,43,226,0.4));
+  transition: transform .2s, box-shadow .2s;
+  text-decoration: none;
+  margin-top: 4px;
+}
+.modal-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px var(--cta-shadow, rgba(138,43,226,0.55));
+}
+
+/* Close button */
+.modal-close-btn {
+  position: absolute; top: 12px; right: 12px;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(8px);
+  border: none; color: rgba(255,255,255,0.6);
+  font-size: 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s; z-index: 10;
+}
+.modal-close-btn:hover {
+  background: rgba(237,66,69,0.3);
+  color: #fff;
+}
+
+.contact-modal { position: relative; }
+
+/* ── Responsive ── */
+@media(max-width:768px) {
+  .contact-profile-info { padding: 56px 20px 16px; }
+  .contact-cards-section { padding: 0 20px 20px; }
+  .contact-avatar-wrap   { left: 20px; }
+  .contact-cards { grid-template-columns: 1fr 1fr; }
+}
+@media(max-width:480px) {
+  .contact-cards { grid-template-columns: 1fr; }
+}
+
+/* ════════════════════════════════════════════════════
+   CARD — Wide style (mini modal look)
+════════════════════════════════════════════════════ */
+
+/* Wide card overrides */
+.ccard-wide {
+  padding: 0;
+  overflow: hidden;
+  min-width: 220px;
+  max-width: 300px;
+  /* Continuous glow animation */
+  animation: card-glow-pulse 3s ease-in-out infinite;
+}
+@keyframes card-glow-pulse {
+  0%,100% { box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.3), 0 0 18px var(--ccard-glow, rgba(138,43,226,0.15)); }
+  50%      { box-shadow: 0 0 0 1px rgba(255,255,255,0.09), 0 8px 32px rgba(0,0,0,0.3), 0 0 32px var(--ccard-glow, rgba(138,43,226,0.35)); }
+}
+.ccard-wide:hover {
+  animation: none;
+  transform: translateY(-6px) scale(1.02);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.1),
+    0 16px 48px rgba(0,0,0,0.5),
+    0 0 48px var(--ccard-glow, rgba(138,43,226,0.4));
+}
+
+/* Banner inside card */
+.ccard-banner {
+  width: 100%;
+  height: 90px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.ccard-banner img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+.ccard-banner-placeholder {
+  width: 100%; height: 100%;
+  position: relative;
+}
+.ccard-banner-placeholder::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  animation: banner-shift 15s linear infinite;
+}
+
+/* Head row: avatar + platform tag + live */
+.ccard-head {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 14px 0;
+  margin-top: -28px;
+  margin-bottom: 10px;
+  z-index: 2;
+}
+
+/* Avatar inside card */
+.ccard-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.ccard-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  border: 3px solid rgba(7,7,15,0.9);
+  box-shadow: 0 0 14px var(--ccard-glow, rgba(138,43,226,0.4));
+}
+.ccard-avatar-placeholder {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  border: 3px solid rgba(7,7,15,0.9);
+}
+
+/* Status dot on card avatar */
+.ccard-status-dot {
+  position: absolute;
+  bottom: 2px; right: 2px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(7,7,15,0.9);
+}
+
+/* Platform tag pill */
+.ccard-platform-tag {
+  margin-right: 8px;
+  margin-bottom: 4px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--ccard-accent, var(--purple-l));
+  padding: 3px 8px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 50px;
+}
+
+/* Live indicator pushed to end */
+.ccard-live {
+  margin-right: auto;
+  margin-bottom: 4px;
+}
+
+/* Body */
+.ccard-body {
+  padding: 0 14px 14px;
+}
+.ccard-custom-status {
+  font-size: 11px; color: var(--txt3);
+  margin-top: 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}

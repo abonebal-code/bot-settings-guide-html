@@ -1,0 +1,46 @@
+/* ═══════════════════════════════════════════════════
+   cursor.css — Custom cursor
+   ═══════════════════════════════════════════════════ */
+
+#cursor-dot {
+  position: fixed; pointer-events: none; z-index: 9998;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--purple-l);
+  box-shadow: 0 0 8px rgba(176,110,240,0.8);
+  transform: translate(-50%,-50%);
+  transition: width .15s, height .15s, background .15s, opacity .2s;
+  will-change: left, top;
+  /* Hidden until first mouse move */
+  opacity: 0;
+  left: -100px; top: -100px;
+}
+#cursor-ring {
+  position: fixed; pointer-events: none; z-index: 9997;
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 1.5px solid rgba(138,43,226,0.5);
+  transform: translate(-50%,-50%);
+  transition: width .18s, height .18s, border-color .18s, left .06s, top .06s, opacity .2s;
+  will-change: left, top;
+  opacity: 0;
+  left: -100px; top: -100px;
+}
+
+/* Visible after first move */
+#cursor-dot.visible  { opacity: 1; }
+#cursor-ring.visible { opacity: 1; }
+
+/* Hover state */
+body.cursor-hover #cursor-dot {
+  width: 10px; height: 10px;
+  background: var(--cyan);
+  box-shadow: 0 0 14px rgba(0,212,255,.75);
+}
+body.cursor-hover #cursor-ring {
+  width: 38px; height: 38px;
+  border-color: rgba(0,212,255,.4);
+}
+
+/* Click state */
+body.cursor-click #cursor-ring {
+  transform: translate(-50%,-50%) scale(.75);
+}

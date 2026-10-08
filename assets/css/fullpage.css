@@ -1,0 +1,130 @@
+/* ═══════════════════════════════════════════════════
+   fullpage.css — Full-page panel scroll system
+   ═══════════════════════════════════════════════════ */
+
+/* ── Container ── */
+#main {
+  margin-right: var(--sb-w);
+  height: 100vh;
+  overflow: hidden;
+  position: relative; z-index: 1;
+  transition: margin var(--tr);
+  display: flex; flex-direction: column;
+}
+#sidebar.collapsed ~ #main { margin-right: var(--sb-min); }
+
+/* ── Panels wrapper ── */
+#panels {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Each panel = full viewport ── */
+.panel {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  bottom: 0;
+  padding-top: var(--nb-h);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  overflow-y: auto;
+  /* hidden by default */
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(24px);
+  transition: opacity .4s cubic-bezier(.4,0,.2,1),
+              transform .4s cubic-bezier(.4,0,.2,1);
+  /* ensure stacking */
+  z-index: 1;
+}
+
+/* Active panel */
+.panel.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+  z-index: 2;
+}
+
+/* Entering from below */
+.panel.enter-below { transform: translateY(40px); opacity: 0; }
+/* Entering from above */
+.panel.enter-above { transform: translateY(-40px); opacity: 0; }
+
+/* Inner content wrapper — max-width */
+.panel-inner {
+  width: 100%;
+  max-width: 1060px;
+  padding: 32px 44px;
+  flex: 1;
+}
+
+/* ── Dot navigation (right side) ── */
+#dot-nav {
+  position: fixed;
+  left: 24px; top: 50%;
+  transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 10px;
+  z-index: 300;
+}
+.dot-nav-item {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--txt3);
+  cursor: pointer;
+  transition: all .25s;
+  position: relative;
+}
+.dot-nav-item:hover { background: var(--purple-l); transform: scale(1.3); }
+.dot-nav-item.active {
+  background: var(--purple-l);
+  box-shadow: 0 0 10px var(--purple-g);
+  transform: scale(1.4);
+}
+/* Tooltip on dot */
+.dot-nav-item::after {
+  content: attr(data-label);
+  position: absolute; left: 20px; top: 50%;
+  transform: translateY(-50%);
+  background: rgba(10,10,24,0.9);
+  backdrop-filter: blur(8px);
+  color: var(--txt); font-size: 11px; font-weight: 600;
+  padding: 4px 10px; border-radius: 6px;
+  white-space: nowrap; pointer-events: none;
+  opacity: 0; transition: opacity .15s;
+}
+.dot-nav-item:hover::after { opacity: 1; }
+
+/* ── Arrow navigation — no border, glowing ── */
+.panel-arrow {
+  position: fixed; left: 20px;
+  width: 32px; height: 32px;
+  background: none;
+  border: none;
+  color: var(--txt3); font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; z-index: 300;
+  transition: color .2s, text-shadow .2s, transform .2s;
+  outline: none;
+  filter: none;
+}
+.panel-arrow:hover {
+  color: var(--purple-l);
+  text-shadow: 0 0 12px rgba(176,110,240,0.9), 0 0 24px rgba(138,43,226,0.5);
+  transform: scale(1.2);
+}
+.panel-arrow:disabled {
+  opacity: .18;
+  pointer-events: none;
+  text-shadow: none;
+}
+#arrow-up   { bottom: calc(50% + 60px); }
+#arrow-down { top:    calc(50% + 60px); }
+
+/* ── Responsive ── */
+@media(max-width:1024px) {
+  #main { margin-right: 0 !important; }
+  .panel-inner { padding: 24px 18px; }
+  #dot-nav, .panel-arrow { display: none; }
+}

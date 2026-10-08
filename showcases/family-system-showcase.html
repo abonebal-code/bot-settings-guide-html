@@ -1,0 +1,2184 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Abonebal — Family System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet" />
+<style>
+/* ═══════════════════════════════ RESET & BASE ═══════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg-deep:      #07070f;
+  --bg-card:      #0d0d1a;
+  --bg-glass:     rgba(255,255,255,0.04);
+  --bg-glass2:    rgba(255,255,255,0.07);
+  --border:       rgba(255,255,255,0.08);
+  --border-glow:  rgba(138,43,226,0.4);
+  --purple:       #8a2be2;
+  --purple-light: #b06ef0;
+  --purple-glow:  rgba(138,43,226,0.25);
+  --gold:         #f0a500;
+  --gold-glow:    rgba(240,165,0,0.25);
+  --green:        #57f287;
+  --red:          #ed4245;
+  --blue:         #5865f2;
+  --cyan:         #00d4ff;
+  --text-primary: #f0f0ff;
+  --text-secondary: #a0a0c0;
+  --text-muted:   #6060a0;
+  --radius:       16px;
+  --radius-sm:    10px;
+  --shadow-card:  0 8px 32px rgba(0,0,0,0.5);
+  --shadow-glow:  0 0 40px rgba(138,43,226,0.3);
+  --font:         'Cairo', 'Tajawal', sans-serif;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 3px; }
+
+/* ═══════════════════════════════ PARTICLES BG ═══════════════════════════════ */
+#particles-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(138,43,226,0.12) 0%, transparent 70%),
+              radial-gradient(ellipse 60% 40% at 80% 100%, rgba(88,101,242,0.08) 0%, transparent 60%),
+              var(--bg-deep);
+}
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  animation: twinkle var(--d, 3s) ease-in-out infinite;
+  opacity: 0;
+}
+@keyframes twinkle {
+  0%,100% { opacity:0; transform: scale(0.5); }
+  50% { opacity: var(--o, 0.6); transform: scale(1); }
+}
+
+/* ═══════════════════════════════ LAYOUT ═══════════════════════════════════ */
+#app { position: relative; z-index: 1; }
+
+/* ═══════════════════════════════ SIDEBAR ═══════════════════════════════════ */
+#sidebar {
+  position: fixed;
+  right: 0; top: 0; bottom: 0;
+  width: 280px;
+  background: rgba(10,10,20,0.96);
+  backdrop-filter: blur(20px);
+  border-left: 1px solid var(--border);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  transform: translateX(0);
+  transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+#sidebar.hidden { transform: translateX(100%); }
+.sidebar-header {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, rgba(138,43,226,0.15), rgba(88,101,242,0.1));
+}
+.sidebar-logo {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
+}
+.sidebar-logo-icon {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 16px var(--purple-glow);
+}
+.sidebar-logo-text { font-size: 18px; font-weight: 700; }
+.sidebar-logo-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 16px 12px; }
+.sidebar-nav::-webkit-scrollbar { width: 3px; }
+.sidebar-section-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  color: var(--text-muted); text-transform: uppercase;
+  padding: 12px 12px 6px;
+}
+.sidebar-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 2px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+.sidebar-item:hover {
+  background: var(--bg-glass2);
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+.sidebar-item.active {
+  background: linear-gradient(135deg, rgba(138,43,226,0.2), rgba(88,101,242,0.15));
+  color: var(--purple-light);
+  border-color: var(--border-glow);
+  box-shadow: 0 2px 12px rgba(138,43,226,0.15);
+}
+.sidebar-item-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  background: var(--bg-glass);
+  flex-shrink: 0;
+}
+.sidebar-item.active .sidebar-item-icon {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  box-shadow: 0 2px 8px var(--purple-glow);
+}
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+.sidebar-toggle {
+  position: fixed;
+  top: 20px; right: 20px;
+  z-index: 300;
+  width: 44px; height: 44px;
+  background: rgba(10,10,20,0.9);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: none;
+  align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s;
+}
+.sidebar-toggle:hover { border-color: var(--purple); box-shadow: 0 0 16px var(--purple-glow); }
+
+/* ═══════════════════════════════ MAIN CONTENT ═══════════════════════════════ */
+#main {
+  margin-right: 280px;
+  min-height: 100vh;
+  transition: margin 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ═══════════════════════════════ HERO ══════════════════════════════════════ */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 60px 48px;
+  position: relative;
+  text-align: center;
+  overflow: hidden;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, rgba(138,43,226,0.2), rgba(88,101,242,0.15));
+  border: 1px solid rgba(138,43,226,0.4);
+  border-radius: 50px;
+  padding: 8px 20px;
+  font-size: 13px;
+  color: var(--purple-light);
+  margin-bottom: 32px;
+  animation: fadeInDown 0.8s ease both;
+}
+.badge-dot {
+  width: 8px; height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform: scale(1); }
+  50% { opacity:0.5; transform: scale(0.7); }
+}
+.hero-title {
+  font-size: clamp(48px, 8vw, 88px);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 8px;
+  animation: fadeInUp 0.8s ease 0.1s both;
+  letter-spacing: -1px;
+}
+.hero-title .gradient-text {
+  background: linear-gradient(135deg, var(--purple-light), var(--cyan), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% 200%;
+  animation: shimmer 4s ease infinite;
+}
+@keyframes shimmer {
+  0%,100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.hero-subtitle {
+  font-size: clamp(18px, 3vw, 26px);
+  color: var(--text-secondary);
+  margin-bottom: 48px;
+  font-weight: 400;
+  animation: fadeInUp 0.8s ease 0.2s both;
+}
+.hero-stats {
+  display: flex; gap: 40px; justify-content: center;
+  margin-bottom: 56px;
+  flex-wrap: wrap;
+  animation: fadeInUp 0.8s ease 0.3s both;
+}
+.hero-stat {
+  text-align: center;
+}
+.hero-stat-number {
+  font-size: 36px; font-weight: 900;
+  background: linear-gradient(135deg, var(--purple-light), var(--cyan));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.hero-stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+.hero-cta {
+  display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+  animation: fadeInUp 0.8s ease 0.4s both;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-size: 15px; font-weight: 600;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: all 0.25s;
+  font-family: var(--font);
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  color: white;
+  box-shadow: 0 6px 24px var(--purple-glow);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(138,43,226,0.5); }
+.btn-secondary {
+  background: var(--bg-glass2);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+}
+.btn-secondary:hover { border-color: var(--purple); color: var(--purple-light); transform: translateY(-2px); }
+.hero-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: linear-gradient(rgba(138,43,226,0.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(138,43,226,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 75%);
+}
+.hero-glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  animation: float 8s ease-in-out infinite;
+}
+.orb-1 { width: 500px; height: 500px; background: rgba(138,43,226,0.12); top: -20%; left: 50%; transform: translateX(-50%); }
+.orb-2 { width: 300px; height: 300px; background: rgba(88,101,242,0.1); bottom: 10%; right: 15%; animation-delay: -4s; }
+@keyframes float {
+  0%,100% { transform: translateY(0) translateX(-50%); }
+  50% { transform: translateY(-30px) translateX(-50%); }
+}
+
+/* ═══════════════════════════════ OVERVIEW SECTION ══════════════════════════ */
+.section {
+  padding: 80px 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.section-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--purple-light);
+  margin-bottom: 16px;
+}
+.section-tag::before {
+  content: ''; width: 24px; height: 2px;
+  background: linear-gradient(90deg, var(--purple), transparent);
+}
+.section-title {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 900;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+.section-desc {
+  font-size: 16px;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin-bottom: 48px;
+  line-height: 1.8;
+}
+
+/* ═══════════════════════════════ FEATURE CARDS ══════════════════════════════ */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+.feature-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.6s ease both;
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--card-color, var(--purple-glow)), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.feature-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--card-color, var(--border-glow));
+  box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 32px var(--card-color, var(--purple-glow));
+}
+.feature-card:hover::before { opacity: 1; }
+.card-icon-wrap {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  margin-bottom: 20px;
+  background: var(--bg-glass2);
+  border: 1px solid var(--border);
+  position: relative; z-index: 1;
+  transition: all 0.3s;
+}
+.feature-card:hover .card-icon-wrap {
+  background: linear-gradient(135deg, var(--card-color, var(--purple)), rgba(0,0,0,0.2));
+  border-color: transparent;
+  box-shadow: 0 4px 20px var(--card-color, var(--purple-glow));
+  transform: scale(1.1);
+}
+.card-title {
+  font-size: 18px; font-weight: 700;
+  margin-bottom: 10px;
+  position: relative; z-index: 1;
+}
+.card-desc {
+  font-size: 14px; color: var(--text-secondary);
+  line-height: 1.7;
+  position: relative; z-index: 1;
+  margin-bottom: 20px;
+}
+.card-tags {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  position: relative; z-index: 1;
+}
+.tag {
+  font-size: 11px; font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 50px;
+  background: var(--bg-glass);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.tag.green { background: rgba(87,242,135,0.1); border-color: rgba(87,242,135,0.3); color: var(--green); }
+.tag.red { background: rgba(237,66,69,0.1); border-color: rgba(237,66,69,0.3); color: var(--red); }
+.tag.blue { background: rgba(88,101,242,0.1); border-color: rgba(88,101,242,0.3); color: #8891f5; }
+.tag.gold { background: rgba(240,165,0,0.1); border-color: rgba(240,165,0,0.3); color: var(--gold); }
+.tag.purple { background: rgba(138,43,226,0.15); border-color: rgba(138,43,226,0.4); color: var(--purple-light); }
+.card-arrow {
+  position: absolute; bottom: 24px; left: 24px;
+  font-size: 20px; color: var(--text-muted);
+  transition: all 0.3s;
+}
+.feature-card:hover .card-arrow { color: var(--purple-light); transform: translateX(-6px); }
+
+/* ═══════════════════════════════ TABS SECTION ═══════════════════════════════ */
+#systems { background: rgba(255,255,255,0.01); }
+.tabs-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 48px;
+}
+.tabs-nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 40px;
+  scrollbar-width: none;
+}
+.tabs-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg-glass);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  transition: all 0.25s;
+  font-family: var(--font);
+  flex-shrink: 0;
+}
+.tab-btn:hover { border-color: var(--purple); color: var(--purple-light); }
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 4px 20px var(--purple-glow);
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeInUp 0.4s ease; }
+
+/* ═══════════════════════════════ SYSTEM DETAIL CARDS ════════════════════════ */
+.sys-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+.sys-info-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+}
+.sys-icon {
+  font-size: 48px; margin-bottom: 16px; display: block;
+}
+.sys-title {
+  font-size: 26px; font-weight: 900; margin-bottom: 8px;
+}
+.sys-subtitle {
+  font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.7;
+}
+.sys-feature-list { list-style: none; }
+.sys-feature-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px; color: var(--text-secondary);
+}
+.sys-feature-list li:last-child { border-bottom: none; }
+.sys-feature-list li .icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+.sys-demo-box {
+  display: flex; flex-direction: column; gap: 20px;
+}
+.discord-mock {
+  background: #313338;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.discord-mock-header {
+  background: #2b2d31;
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid rgba(0,0,0,0.3);
+  font-size: 13px; font-weight: 600;
+  color: #f0f0f0;
+}
+.discord-mock-header .channel-icon { color: #8d9298; font-size: 16px; }
+.discord-mock-body { padding: 20px; }
+.discord-msg {
+  display: flex; gap: 12px; margin-bottom: 16px;
+}
+.discord-msg:last-child { margin-bottom: 0; }
+.discord-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+}
+.av-bot {
+  background: linear-gradient(135deg, #5865f2, #8a2be2);
+}
+.av-user {
+  background: linear-gradient(135deg, #57f287, #00d4ff);
+  color: #1a1a1a;
+  font-size: 14px;
+}
+.discord-msg-content { flex: 1; }
+.discord-msg-author {
+  font-size: 13px; font-weight: 600; margin-bottom: 4px;
+}
+.discord-msg-author .bot-tag {
+  font-size: 10px; background: #5865f2; padding: 2px 5px;
+  border-radius: 3px; margin-right: 6px; font-weight: 700;
+  vertical-align: middle;
+}
+.discord-msg-text {
+  font-size: 14px; color: #dbdee1; line-height: 1.5;
+}
+.discord-embed {
+  margin-top: 8px;
+  border-radius: 6px;
+  overflow: hidden;
+  border-right: 4px solid var(--embed-color, var(--purple));
+  background: #2b2d31;
+}
+.discord-embed-inner { padding: 12px 14px; }
+.discord-embed-title {
+  font-size: 14px; font-weight: 700; color: white; margin-bottom: 6px;
+}
+.discord-embed-desc {
+  font-size: 13px; color: #b5bac1; line-height: 1.5;
+}
+.discord-embed-field {
+  margin-top: 8px;
+}
+.discord-embed-field-name {
+  font-size: 12px; font-weight: 700; color: white; margin-bottom: 2px;
+}
+.discord-embed-field-value {
+  font-size: 12px; color: #b5bac1;
+}
+.discord-btns {
+  display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+}
+.discord-btn {
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 13px; font-weight: 600;
+  cursor: default;
+}
+.discord-btn.primary { background: #5865f2; color: white; }
+.discord-btn.danger { background: #ed4245; color: white; }
+.discord-btn.success { background: #57f287; color: #1a1a1a; }
+.discord-btn.secondary { background: #4e5058; color: #dbdee1; }
+.sys-commands-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+.sys-commands-title {
+  font-size: 14px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+.command-row {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.command-row:last-child { border-bottom: none; }
+.command-name {
+  font-family: 'Courier New', monospace;
+  background: rgba(88,101,242,0.15);
+  color: #8891f5;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.command-desc { color: var(--text-secondary); }
+.command-perm {
+  margin-right: auto;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 50px;
+  background: rgba(240,165,0,0.1);
+  border: 1px solid rgba(240,165,0,0.3);
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════ FLOW DIAGRAM ═══════════════════════════════ */
+.flow-diagram {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+}
+.flow-title {
+  font-size: 14px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+.flow-steps {
+  display: flex; flex-direction: column; gap: 0;
+}
+.flow-step {
+  display: flex; gap: 16px; align-items: flex-start;
+}
+.flow-step-line {
+  display: flex; flex-direction: column; align-items: center;
+  flex-shrink: 0;
+}
+.flow-step-dot {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: white;
+  box-shadow: 0 2px 10px var(--purple-glow);
+}
+.flow-step-connector {
+  width: 2px; flex: 1; min-height: 24px;
+  background: linear-gradient(180deg, var(--purple), transparent);
+  margin: 4px 0;
+}
+.flow-step-body {
+  padding-bottom: 20px; flex: 1;
+}
+.flow-step-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.flow-step-desc { font-size: 13px; color: var(--text-secondary); }
+
+/* ═══════════════════════════════ CONFIG TABLE ════════════════════════════════ */
+.config-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.config-table th {
+  background: rgba(138,43,226,0.1);
+  color: var(--purple-light);
+  padding: 10px 14px;
+  text-align: right;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+}
+.config-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  vertical-align: top;
+}
+.config-table tr:last-child td { border-bottom: none; }
+.config-table tr:hover td { background: var(--bg-glass); }
+.config-key {
+  font-family: 'Courier New', monospace;
+  color: var(--cyan);
+  font-size: 12px;
+}
+
+/* ═══════════════════════════════ STATS SECTION ══════════════════════════════ */
+#stats-section {
+  padding: 80px 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  text-align: center;
+  position: relative; overflow: hidden;
+  transition: all 0.3s;
+}
+.stat-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--stat-color, var(--purple)), transparent);
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--stat-color, var(--border-glow));
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.stat-icon { font-size: 36px; margin-bottom: 12px; }
+.stat-number {
+  font-size: 36px; font-weight: 900;
+  background: linear-gradient(135deg, var(--stat-color, var(--purple-light)), white);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.stat-label { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
+
+/* ═══════════════════════════════ MODAL ══════════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  z-index: 400;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  width: 100%; max-width: 680px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 60px var(--purple-glow);
+  transform: scale(0.95) translateY(20px);
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.modal-overlay.open .modal { transform: scale(1) translateY(0); }
+.modal-header {
+  padding: 28px 32px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0;
+  background: var(--bg-card);
+  z-index: 1;
+}
+.modal-title { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+.modal-close {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  background: var(--bg-glass2);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.modal-close:hover { background: rgba(237,66,69,0.15); border-color: var(--red); color: var(--red); }
+.modal-body { padding: 28px 32px; }
+.modal-section { margin-bottom: 28px; }
+.modal-section-title {
+  font-size: 13px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.modal-section-title::after {
+  content: ''; flex: 1; height: 1px;
+  background: var(--border);
+}
+
+/* ═══════════════════════════════ FOOTER ═════════════════════════════════════ */
+footer {
+  border-top: 1px solid var(--border);
+  background: rgba(0,0,0,0.3);
+  padding: 48px;
+  text-align: center;
+  position: relative;
+}
+.footer-logo {
+  font-size: 28px; font-weight: 900;
+  background: linear-gradient(135deg, var(--purple-light), var(--cyan));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 8px;
+}
+.footer-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+.footer-copy { font-size: 13px; color: var(--text-muted); }
+.footer-copy span { color: var(--purple-light); font-weight: 700; }
+
+/* ═══════════════════════════════ ANIMATIONS ═════════════════════════════════ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════════════════ RESPONSIVE ═════════════════════════════════ */
+@media (max-width: 1024px) {
+  #sidebar { transform: translateX(100%); }
+  #sidebar.open { transform: translateX(0); }
+  #main { margin-right: 0; }
+  .sidebar-toggle { display: flex; }
+  .sys-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .section, .tabs-wrapper, #stats-section { padding: 60px 24px; }
+  #hero { padding: 80px 24px 60px; }
+  .hero-stats { gap: 24px; }
+  .features-grid { grid-template-columns: 1fr; }
+  .modal-header, .modal-body { padding: 20px; }
+}
+
+/* ═══════════════════════════════ MISC ═══════════════════════════════════════ */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  max-width: 1200px; margin: 0 auto;
+}
+.gradient-hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--purple), var(--blue), transparent);
+  margin: 0;
+}
+.highlight-box {
+  background: linear-gradient(135deg, rgba(138,43,226,0.1), rgba(88,101,242,0.08));
+  border: 1px solid rgba(138,43,226,0.25);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+.highlight-box strong { color: var(--purple-light); }
+.badge-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px 10px;
+  border-radius: 50px;
+  font-size: 12px; font-weight: 600;
+}
+.badge-on { background: rgba(87,242,135,0.12); border: 1px solid rgba(87,242,135,0.3); color: var(--green); }
+.badge-off { background: rgba(237,66,69,0.12); border: 1px solid rgba(237,66,69,0.3); color: var(--red); }
+.badge-auto { background: rgba(88,101,242,0.12); border: 1px solid rgba(88,101,242,0.3); color: #8891f5; }
+
+/* ─── Sidebar overlay for mobile ─────── */
+#sidebar-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
+  z-index: 190;
+  display: none;
+}
+#sidebar-overlay.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ PARTICLES BG ═══════════════════ -->
+<div id="particles-bg"></div>
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">⚔️</div>
+      <div>
+        <div class="sidebar-logo-text">Family System</div>
+        <div class="sidebar-logo-sub">by Abonebal</div>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="sidebar-section-label">التنقل</div>
+    <a class="sidebar-item active" href="#hero" onclick="setActive(this)">
+      <div class="sidebar-item-icon">🏠</div> الرئيسية
+    </a>
+    <a class="sidebar-item" href="#overview" onclick="setActive(this)">
+      <div class="sidebar-item-icon">📋</div> نظرة عامة
+    </a>
+    <a class="sidebar-item" href="#systems" onclick="setActive(this)">
+      <div class="sidebar-item-icon">⚙️</div> الأنظمة
+    </a>
+    <a class="sidebar-item" href="#stats-section" onclick="setActive(this)">
+      <div class="sidebar-item-icon">📊</div> إحصائيات
+    </a>
+    <div class="sidebar-section-label" style="margin-top:8px;">الأنظمة</div>
+    <a class="sidebar-item" href="#systems" onclick="setActive(this);switchTab('recruit')">
+      <div class="sidebar-item-icon">🎖️</div> أمر التجنيد
+    </a>
+    <a class="sidebar-item" href="#systems" onclick="setActive(this);switchTab('kick')">
+      <div class="sidebar-item-icon">⚡</div> أمر الفصل
+    </a>
+    <a class="sidebar-item" href="#systems" onclick="setActive(this);switchTab('vacation')">
+      <div class="sidebar-item-icon">🏖️</div> نظام الإجازات
+    </a>
+    <a class="sidebar-item" href="#systems" onclick="setActive(this);switchTab('fines')">
+      <div class="sidebar-item-icon">💰</div> نظام الغرامات
+    </a>
+    <a class="sidebar-item" href="#systems" onclick="setActive(this);switchTab('rewards')">
+      <div class="sidebar-item-icon">🏆</div> نظام المكافآت
+    </a>
+    <a class="sidebar-item" href="#systems" onclick="setActive(this);switchTab('panel')">
+      <div class="sidebar-item-icon">🗂️</div> لوحة التقارير
+    </a>
+    <a class="sidebar-item" href="#systems" onclick="setActive(this);switchTab('blacklist')">
+      <div class="sidebar-item-icon">🚫</div> البلاك ليست
+    </a>
+    <a class="sidebar-item" href="#systems" onclick="setActive(this);switchTab('status')">
+      <div class="sidebar-item-icon">👁️</div> حالة العائلة
+    </a>
+  </div>
+  <div class="sidebar-footer">
+    © 2026 Abonebal — جميع الحقوق محفوظة
+  </div>
+</nav>
+
+<!-- Mobile toggle -->
+<button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+<!-- ═══════════════════ MAIN ═══════════════════════════ -->
+<div id="app">
+  <div id="main">
+
+    <!-- ══════════════════ HERO ══════════════════════ -->
+    <section id="hero">
+      <div class="hero-grid"></div>
+      <div class="hero-glow-orb orb-1"></div>
+      <div class="hero-glow-orb orb-2"></div>
+
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        نظام عائلات متكامل لـ Discord
+      </div>
+
+      <h1 class="hero-title">
+        <div class="gradient-text">Family System</div>
+        <div style="font-size:0.55em; color: var(--text-secondary); font-weight: 400; margin-top: 8px;">by Abonebal</div>
+      </h1>
+
+      <p class="hero-subtitle">
+        منظومة أنظمة احترافية لإدارة عائلات ديسكورد — من التجنيد حتى الفصل<br/>
+        كل شيء مؤتمت، قابل للتخصيص، ويعمل بدون إعادة تشغيل
+      </p>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-number">8</div>
+          <div class="hero-stat-label">أنظمة متكاملة</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-number">∞</div>
+          <div class="hero-stat-label">سيرفرات مدعومة</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-number">0</div>
+          <div class="hero-stat-label">إعادة تشغيل مطلوبة</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-number">100%</div>
+          <div class="hero-stat-label">أتمتة كاملة</div>
+        </div>
+      </div>
+
+      <div class="hero-cta">
+        <a href="#overview" class="btn btn-primary">🔍 استكشف الأنظمة</a>
+        <a href="#systems" class="btn btn-secondary">⚙️ التفاصيل التقنية</a>
+      </div>
+    </section>
+
+    <hr class="gradient-hr" />
+
+    <!-- ══════════════════ OVERVIEW ══════════════════ -->
+    <section id="overview" class="section">
+      <div class="section-tag">نظرة عامة</div>
+      <h2 class="section-title">كل ما تحتاجه لإدارة عائلتك</h2>
+      <p class="section-desc">
+        ثمانية أنظمة مترابطة تغطي كل جانب من جوانب إدارة العائلة — مبنية بمعايير احترافية،
+        قابلة للتفعيل والإيقاف في أي وقت، وتدعم عدة سيرفرات من ملف واحد.
+      </p>
+
+      <div class="features-grid">
+        <div class="feature-card reveal" style="--card-color: rgba(87,242,135,0.2); animation-delay:0.05s" onclick="openModal('modal-recruit')">
+          <div class="card-icon-wrap">🎖️</div>
+          <div class="card-title">أمر التجنيد</div>
+          <div class="card-desc">تجنيد أعضاء جدد بشكل كامل — رتب، لقب، روم خاص، وقرار رسمي مؤتمت.</div>
+          <div class="card-tags">
+            <span class="tag green">تلقائي</span>
+            <span class="tag blue">روم خاص</span>
+            <span class="tag purple">قرار رسمي</span>
+          </div>
+          <div class="card-arrow">←</div>
+        </div>
+
+        <div class="feature-card reveal" style="--card-color: rgba(237,66,69,0.2); animation-delay:0.1s" onclick="openModal('modal-kick')">
+          <div class="card-icon-wrap">⚡</div>
+          <div class="card-title">أمر الفصل</div>
+          <div class="card-desc">فصل الأعضاء مع سحب الرتب، إرسال DM بالقرار، وتسجيل في قناة القرارات.</div>
+          <div class="card-tags">
+            <span class="tag red">سحب رتب</span>
+            <span class="tag blue">DM تلقائي</span>
+            <span class="tag gold">لوق رسمي</span>
+          </div>
+          <div class="card-arrow">←</div>
+        </div>
+
+        <div class="feature-card reveal" style="--card-color: rgba(0,212,255,0.15); animation-delay:0.15s" onclick="openModal('modal-vacation')">
+          <div class="card-icon-wrap">🏖️</div>
+          <div class="card-title">نظام الإجازات</div>
+          <div class="card-desc">طلبات إجازة بأزرار تفاعلية — قبول، رفض، كسر عذر، وعرض إجازات نشطة.</div>
+          <div class="card-tags">
+            <span class="tag blue">أزرار تفاعلية</span>
+            <span class="tag green">إشعار تلقائي</span>
+          </div>
+          <div class="card-arrow">←</div>
+        </div>
+
+        <div class="feature-card reveal" style="--card-color: rgba(240,165,0,0.2); animation-delay:0.2s" onclick="openModal('modal-fines')">
+          <div class="card-icon-wrap">💰</div>
+          <div class="card-title">نظام الغرامات</div>
+          <div class="card-desc">فرض وتتبع الغرامات المالية مع تذكير يومي تلقائي وتأكيد السداد.</div>
+          <div class="card-tags">
+            <span class="tag gold">تذكير يومي</span>
+            <span class="tag green">تتبع سداد</span>
+          </div>
+          <div class="card-arrow">←</div>
+        </div>
+
+        <div class="feature-card reveal" style="--card-color: rgba(87,242,135,0.15); animation-delay:0.25s" onclick="openModal('modal-rewards')">
+          <div class="card-icon-wrap">🏆</div>
+          <div class="card-title">نظام المكافآت</div>
+          <div class="card-desc">إصدار مكافآت مالية رسمية مع تأكيد الصرف، وتذكير يومي للمكافآت المعلقة.</div>
+          <div class="card-tags">
+            <span class="tag gold">قرار رسمي</span>
+            <span class="tag blue">تأكيد صرف</span>
+          </div>
+          <div class="card-arrow">←</div>
+        </div>
+
+        <div class="feature-card reveal" style="--card-color: rgba(88,101,242,0.25); animation-delay:0.3s" onclick="openModal('modal-panel')">
+          <div class="card-icon-wrap">🗂️</div>
+          <div class="card-title">لوحة تقارير الأعضاء</div>
+          <div class="card-desc">لوحة متكاملة برفع تقارير، نقاط، إحصائيات، طعون، ووضع صيانة.</div>
+          <div class="card-tags">
+            <span class="tag purple">Components V2</span>
+            <span class="tag green">نقاط</span>
+            <span class="tag blue">طعون</span>
+          </div>
+          <div class="card-arrow">←</div>
+        </div>
+
+        <div class="feature-card reveal" style="--card-color: rgba(237,66,69,0.15); animation-delay:0.35s" onclick="openModal('modal-blacklist')">
+          <div class="card-icon-wrap">🚫</div>
+          <div class="card-title">البلاك ليست</div>
+          <div class="card-desc">إدارة قائمة الحظر مع إشعار DM تلقائي وعرض بيانات مفصل بصفحات.</div>
+          <div class="card-tags">
+            <span class="tag red">حظر تلقائي</span>
+            <span class="tag blue">DM إشعار</span>
+          </div>
+          <div class="card-arrow">←</div>
+        </div>
+
+        <div class="feature-card reveal" style="--card-color: rgba(138,43,226,0.2); animation-delay:0.4s" onclick="openModal('modal-status')">
+          <div class="card-icon-wrap">👁️</div>
+          <div class="card-title">حالة العائلة</div>
+          <div class="card-desc">مراقبة حضور أعضاء العائلة لحظة بلحظة مع ملخصات يومية وإحصائيات جلسات.</div>
+          <div class="card-tags">
+            <span class="tag purple">مراقبة لحظية</span>
+            <span class="tag gold">ملخص يومي</span>
+          </div>
+          <div class="card-arrow">←</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ══════════════════ SYSTEMS TABS ══════════════════ -->
+    <section id="systems">
+      <div class="tabs-wrapper">
+        <div class="section-tag">تفاصيل الأنظمة</div>
+        <h2 class="section-title">كيف يعمل كل نظام؟</h2>
+        <p class="section-desc">اختر أي نظام لعرض آلية عمله، أوامره، وكيفية تشغيله.</p>
+
+        <!-- TABS NAV -->
+        <div class="tabs-nav" id="tabsNav">
+          <button class="tab-btn active" onclick="switchTab('recruit')" data-tab="recruit">🎖️ أمر التجنيد</button>
+          <button class="tab-btn" onclick="switchTab('kick')" data-tab="kick">⚡ أمر الفصل</button>
+          <button class="tab-btn" onclick="switchTab('vacation')" data-tab="vacation">🏖️ نظام الإجازات</button>
+          <button class="tab-btn" onclick="switchTab('fines')" data-tab="fines">💰 نظام الغرامات</button>
+          <button class="tab-btn" onclick="switchTab('rewards')" data-tab="rewards">🏆 نظام المكافآت</button>
+          <button class="tab-btn" onclick="switchTab('panel')" data-tab="panel">🗂️ لوحة التقارير</button>
+          <button class="tab-btn" onclick="switchTab('blacklist')" data-tab="blacklist">🚫 البلاك ليست</button>
+          <button class="tab-btn" onclick="switchTab('status')" data-tab="status">👁️ حالة العائلة</button>
+        </div>
+
+        <!-- ───────── TAB: RECRUIT ───────── -->
+        <div class="tab-content active" id="tab-recruit">
+          <div class="sys-layout">
+            <div>
+              <div class="sys-info-box">
+                <span class="sys-icon">🎖️</span>
+                <div class="sys-title">أمر التجنيد</div>
+                <div class="sys-subtitle">نظام تجنيد متكامل يحول عملية إضافة عضو جديد من مهمة يدوية إلى سلسلة مؤتمتة بالكامل.</div>
+                <ul class="sys-feature-list">
+                  <li><span class="icon">✅</span> يطلب تأكيداً بأزرار نعم/لا قبل البدء</li>
+                  <li><span class="icon">⏱️</span> عداد 120 ثانية لإدخال اسم اللاعب داخل MTA</li>
+                  <li><span class="icon">🎭</span> يعطي الرتب المحددة ويغير لقب العضو تلقائياً</li>
+                  <li><span class="icon">🔒</span> ينشئ روماً خاصاً باسم العضو داخل الكاتيغوري</li>
+                  <li><span class="icon">📌</span> يرسل إيمبد ترحيب ويثبته في الروم</li>
+                  <li><span class="icon">📋</span> يرسل قرار توظيف رسمي في قناة القرارات</li>
+                  <li><span class="icon">🏷️</span> يحدد القطاع (شرطة/جيش/...) تلقائياً من رد العضو</li>
+                  <li><span class="icon">🔄</span> تحديث فوري بدون إعادة تشغيل البوت</li>
+                </ul>
+              </div>
+            </div>
+            <div class="sys-demo-box">
+              <div class="discord-mock">
+                <div class="discord-mock-header">
+                  <span class="channel-icon">#</span> قرارات-التوظيف
+                </div>
+                <div class="discord-mock-body">
+                  <div class="discord-msg">
+                    <div class="discord-avatar av-bot">B</div>
+                    <div class="discord-msg-content">
+                      <div class="discord-msg-author">Abonebal BOT <span class="bot-tag">BOT</span></div>
+                      <div class="discord-embed" style="--embed-color: #57f287;">
+                        <div class="discord-embed-inner">
+                          <div class="discord-embed-title">🎖️ Sambo Family — قرار التوظيف</div>
+                          <div class="discord-embed-desc">
+                            تم تجنيد العضو <strong>@Ahmed_Sambo</strong> في صفوف العائلة<br/>
+                            <br/>
+                            👤 الاسم: <code>Ahmed_Sambo</code><br/>
+                            🎭 الرتبة: عضو جديد<br/>
+                            📅 التاريخ: &lt;t:1728000000:F&gt;
+                          </div>
+                          <div class="discord-btns">
+                            <span class="discord-btn primary">🔔 @عائلة</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="sys-commands-box">
+                <div class="sys-commands-title">الأوامر المتاحة</div>
+                <div class="command-row">
+                  <span class="command-name">!تجنيد</span>
+                  <span class="command-desc">بدء عملية التجنيد بالرد على رسالة عضو</span>
+                  <span class="command-perm">الإدارة</span>
+                </div>
+              </div>
+              <div class="flow-diagram">
+                <div class="flow-title">تسلسل العملية</div>
+                <div class="flow-steps">
+                  <div class="flow-step">
+                    <div class="flow-step-line"><div class="flow-step-dot">1</div><div class="flow-step-connector"></div></div>
+                    <div class="flow-step-body"><div class="flow-step-title">تأكيد المسؤول</div><div class="flow-step-desc">يضغط نعم/لا للتأكيد على البدء</div></div>
+                  </div>
+                  <div class="flow-step">
+                    <div class="flow-step-line"><div class="flow-step-dot">2</div><div class="flow-step-connector"></div></div>
+                    <div class="flow-step-body"><div class="flow-step-title">إدخال اسم MTA</div><div class="flow-step-desc">عداد 120 ثانية لإدخال الاسم</div></div>
+                  </div>
+                  <div class="flow-step">
+                    <div class="flow-step-line"><div class="flow-step-dot">3</div><div class="flow-step-connector"></div></div>
+                    <div class="flow-step-body"><div class="flow-step-title">تطبيق الرتب والتغييرات</div><div class="flow-step-desc">رتب، لقب، روم خاص، تثبيت ترحيب</div></div>
+                  </div>
+                  <div class="flow-step">
+                    <div class="flow-step-line"><div class="flow-step-dot">4</div></div>
+                    <div class="flow-step-body"><div class="flow-step-title">قرار التوظيف الرسمي</div><div class="flow-step-desc">نشر قرار في قناة القرارات مع المنشن</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ───────── TAB: KICK ───────── -->
+        <div class="tab-content" id="tab-kick">
+          <div class="sys-layout">
+            <div>
+              <div class="sys-info-box">
+                <span class="sys-icon">⚡</span>
+                <div class="sys-title">أمر الفصل</div>
+                <div class="sys-subtitle">فصل الأعضاء بأمر واحد مع تسجيل كامل وإرسال قرار رسمي تلقائياً.</div>
+                <ul class="sys-feature-list">
+                  <li><span class="icon">🗑️</span> سحب جميع الرتب المحددة من العضو فوراً</li>
+                  <li><span class="icon">✏️</span> حذف لقب العضو تلقائياً</li>
+                  <li><span class="icon">📋</span> قرار فصل رسمي في قناة القرارات</li>
+                  <li><span class="icon">✉️</span> DM للعضو المفصول بتفاصيل القرار</li>
+                  <li><span class="icon">📦</span> نقل روم العضو لكاتيغوري المفصولين</li>
+                  <li><span class="icon">🔒</span> تحكم بالرتب المسموح لها بتنفيذ الأمر</li>
+                  <li><span class="icon">⚠️</span> إيمبد تنبيه عند تعطيل الأمر</li>
+                </ul>
+              </div>
+            </div>
+            <div class="sys-demo-box">
+              <div class="discord-mock">
+                <div class="discord-mock-header">
+                  <span class="channel-icon">#</span> قرارات-الفصل
+                </div>
+                <div class="discord-mock-body">
+                  <div class="discord-msg">
+                    <div class="discord-avatar av-bot">B</div>
+                    <div class="discord-msg-content">
+                      <div class="discord-msg-author">Abonebal BOT <span class="bot-tag">BOT</span></div>
+                      <div class="discord-embed" style="--embed-color: #ed4245;">
+                        <div class="discord-embed-inner">
+                          <div class="discord-embed-title">⚡ Sambo Family — قرار الفصل</div>
+                          <div class="discord-embed-desc">
+                            تم فصل العضو <strong>@BadPlayer</strong> من العائلة<br/><br/>
+                            📋 السبب: عدم الالتزام بقواعد العائلة<br/>
+                            👑 بأمر من: @القائد
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="sys-commands-box">
+                <div class="sys-commands-title">الأوامر المتاحة</div>
+                <div class="command-row">
+                  <span class="command-name">!فصل @عضو [سبب]</span>
+                  <span class="command-desc">فصل عضو مع ذكر السبب</span>
+                  <span class="command-perm">الإدارة</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ───────── TAB: VACATION ───────── -->
+        <div class="tab-content" id="tab-vacation">
+          <div class="sys-layout">
+            <div>
+              <div class="sys-info-box">
+                <span class="sys-icon">🏖️</span>
+                <div class="sys-title">نظام الإجازات</div>
+                <div class="sys-subtitle">نظام طلبات إجازة كامل بأزرار تفاعلية وإشعارات تلقائية.</div>
+                <ul class="sys-feature-list">
+                  <li><span class="icon">📝</span> فورم تفاعلي لتقديم طلب الإجازة</li>
+                  <li><span class="icon">✅</span> الإدارة تقبل أو ترفض من قناة الطلبات</li>
+                  <li><span class="icon">🏷️</span> رول إجازة يُمنح عند القبول ويُسحب عند الانتهاء</li>
+                  <li><span class="icon">🔓</span> كسر الإجازة والعودة المبكرة</li>
+                  <li><span class="icon">❌</span> سحب الطلب قبل اتخاذ القرار</li>
+                  <li><span class="icon">👤</span> الإدارة تعرض كل الإجازات النشطة</li>
+                  <li><span class="icon">✉️</span> إشعار DM بقرار القبول أو الرفض</li>
+                </ul>
+              </div>
+            </div>
+            <div class="sys-demo-box">
+              <div class="discord-mock">
+                <div class="discord-mock-header">
+                  <span class="channel-icon">#</span> نظام-الإجازات
+                </div>
+                <div class="discord-mock-body">
+                  <div class="discord-msg">
+                    <div class="discord-avatar av-bot">B</div>
+                    <div class="discord-msg-content">
+                      <div class="discord-msg-author">Abonebal BOT <span class="bot-tag">BOT</span></div>
+                      <div class="discord-embed" style="--embed-color: #2758bb;">
+                        <div class="discord-embed-inner">
+                          <div class="discord-embed-title">🏖️ نظام الإجازات</div>
+                          <div class="discord-embed-desc">يمكنك من هنا طلب إجازة أو إدارة إجازتك الحالية</div>
+                        </div>
+                      </div>
+                      <div class="discord-btns">
+                        <span class="discord-btn success">✅ طلب إجازة</span>
+                        <span class="discord-btn secondary">🔓 كسر عذر</span>
+                        <span class="discord-btn secondary">👤 عرض الإجازات</span>
+                        <span class="discord-btn danger">❌ سحب الطلب</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="sys-commands-box">
+                <div class="sys-commands-title">الأوامر المتاحة</div>
+                <div class="command-row">
+                  <span class="command-name">!vacation</span>
+                  <span class="command-desc">إرسال لوحة نظام الإجازات في القناة</span>
+                  <span class="command-perm">الإدارة</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ───────── TAB: FINES ───────── -->
+        <div class="tab-content" id="tab-fines">
+          <div class="sys-layout">
+            <div>
+              <div class="sys-info-box">
+                <span class="sys-icon">💰</span>
+                <div class="sys-title">نظام الغرامات</div>
+                <div class="sys-subtitle">فرض وتتبع الغرامات المالية مع تذكير يومي ونظام سداد شفاف.</div>
+                <ul class="sys-feature-list">
+                  <li><span class="icon">💸</span> فرض غرامة على عضو أو عدة أعضاء دفعة واحدة</li>
+                  <li><span class="icon">📋</span> عرض الغرامات غير المسددة للعضو</li>
+                  <li><span class="icon">✅</span> تأكيد سداد غرامة محددة برابطها</li>
+                  <li><span class="icon">🔔</span> تذكير يومي في DM وروم العضو بالوقت المحدد</li>
+                  <li><span class="icon">📊</span> تقرير إداري يومي بقائمة المدينين</li>
+                  <li><span class="icon">🔍</span> استعلام عضو عن غراماته في قناة محددة</span></li>
+                </ul>
+              </div>
+            </div>
+            <div class="sys-demo-box">
+              <div class="discord-mock">
+                <div class="discord-mock-header">
+                  <span class="channel-icon">#</span> قرارات-الغرامات
+                </div>
+                <div class="discord-mock-body">
+                  <div class="discord-msg">
+                    <div class="discord-avatar av-bot">B</div>
+                    <div class="discord-msg-content">
+                      <div class="discord-msg-author">Abonebal BOT <span class="bot-tag">BOT</span></div>
+                      <div class="discord-embed" style="--embed-color: #f0a500;">
+                        <div class="discord-embed-inner">
+                          <div class="discord-embed-title">💰 قرار غرامة — Sambo Family</div>
+                          <div class="discord-embed-desc">
+                            🟡 @Ahmed_Sambo<br/>
+                            /123456789/<br/><br/>
+                            💰 قيمة الغرامة: <strong>5,000$</strong><br/>
+                            📋 السبب: التغيب بدون إذن<br/>
+                            👑 بأمر من: @القائد
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="sys-commands-box">
+                <div class="sys-commands-title">الأوامر المتاحة</div>
+                <div class="command-row">
+                  <span class="command-name">!غرامة [مبلغ] @عضو [سبب]</span>
+                  <span class="command-desc">فرض غرامة مالية</span>
+                  <span class="command-perm">الإدارة</span>
+                </div>
+                <div class="command-row">
+                  <span class="command-name">!غراماتي</span>
+                  <span class="command-desc">عرض غراماتك غير المسددة</span>
+                  <span class="command-perm">الجميع</span>
+                </div>
+                <div class="command-row">
+                  <span class="command-name">!غراماتي @عضو</span>
+                  <span class="command-desc">عرض غرامات عضو آخر</span>
+                  <span class="command-perm">الإدارة</span>
+                </div>
+                <div class="command-row">
+                  <span class="command-name">!سداد @عضو</span>
+                  <span class="command-desc">عرض غرامات مع أوامر السداد</span>
+                  <span class="command-perm">الإدارة</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ───────── TAB: REWARDS ───────── -->
+        <div class="tab-content" id="tab-rewards">
+          <div class="sys-layout">
+            <div>
+              <div class="sys-info-box">
+                <span class="sys-icon">🏆</span>
+                <div class="sys-title">نظام المكافآت</div>
+                <div class="sys-subtitle">نظام مكافآت مالية احترافي مع تتبع الصرف وتذكير دوري للمبالغ المعلقة.</div>
+                <ul class="sys-feature-list">
+                  <li><span class="icon">🏆</span> إصدار قرار مكافأة رسمي لعضو أو عدة أعضاء</li>
+                  <li><span class="icon">🟡</span> تعليم المكافأة كـ "معلقة" حتى يتم الصرف</li>
+                  <li><span class="icon">✅</span> تأكيد صرف مكافأة برابط القرار</li>
+                  <li><span class="icon">🔔</span> تذكير يومي في DM وروم العضو</li>
+                  <li><span class="icon">📊</span> تقرير إداري بالمكافآت غير المصروفة</li>
+                  <li><span class="icon">🔍</span> استعلام عضو عن مكافآته في قناة محددة</span></li>
+                </ul>
+              </div>
+            </div>
+            <div class="sys-demo-box">
+              <div class="discord-mock">
+                <div class="discord-mock-header">
+                  <span class="channel-icon">#</span> قرارات-المكافآت
+                </div>
+                <div class="discord-mock-body">
+                  <div class="discord-msg">
+                    <div class="discord-avatar av-bot">B</div>
+                    <div class="discord-msg-content">
+                      <div class="discord-msg-author">Abonebal BOT <span class="bot-tag">BOT</span></div>
+                      <div class="discord-embed" style="--embed-color: #2ecc71;">
+                        <div class="discord-embed-inner">
+                          <div class="discord-embed-title">🏆 قرار مكافأة — Sambo Family</div>
+                          <div class="discord-embed-desc">
+                            🟡 @Ahmed_Sambo<br/>
+                            /123456789/<br/><br/>
+                            💰 قيمة المكافأة: <strong>10,000$</strong><br/>
+                            📋 السبب: أداء متميز في العمليات<br/>
+                            👑 بأمر من: @القائد
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="sys-commands-box">
+                <div class="sys-commands-title">الأوامر المتاحة</div>
+                <div class="command-row">
+                  <span class="command-name">!مكافأة [مبلغ] @عضو [سبب]</span>
+                  <span class="command-desc">إصدار مكافأة مالية</span>
+                  <span class="command-perm">الإدارة</span>
+                </div>
+                <div class="command-row">
+                  <span class="command-name">!مكافآتي</span>
+                  <span class="command-desc">عرض مكافآتك غير المصروفة</span>
+                  <span class="command-perm">الجميع</span>
+                </div>
+                <div class="command-row">
+                  <span class="command-name">!صرف [رابط] [userId]</span>
+                  <span class="command-desc">تأكيد صرف مكافأة</span>
+                  <span class="command-perm">الإدارة</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ───────── TAB: PANEL ───────── -->
+        <div class="tab-content" id="tab-panel">
+          <div class="sys-layout">
+            <div>
+              <div class="sys-info-box">
+                <span class="sys-icon">🗂️</span>
+                <div class="sys-title">لوحة تقارير الأعضاء</div>
+                <div class="sys-subtitle">النظام الأضخم — مبني على Components V2 مع منظومة كاملة من الرفع والمراجعة والطعون.</div>
+                <ul class="sys-feature-list">
+                  <li><span class="icon">📋</span> رفع تقارير بأنواع متعددة (تثبيت، سرقة، احتلال...)</li>
+                  <li><span class="icon">📸</span> رفع يدوي بالصور مع تحميل كـ attachments دائمة</li>
+                  <li><span class="icon">⭐</span> نظام نقاط مختلف لكل نوع تقرير</li>
+                  <li><span class="icon">🏅</span> لوحة متصدرين بالنقاط <code>!top</code></li>
+                  <li><span class="icon">📊</span> تقارير إحصائية يومية وأسبوعية تلقائية</li>
+                  <li><span class="icon">⏰</span> تنبيه للتقارير المعلقة +24 ساعة</li>
+                  <li><span class="icon">⚖️</span> نظام طعن للأعضاء في قرار الرفض</li>
+                  <li><span class="icon">🔧</span> وضع صيانة بدون إيقاف البوت</li>
+                  <li><span class="icon">📣</span> تذكير جماعي DM لكل أعضاء العائلة</li>
+                </ul>
+              </div>
+            </div>
+            <div class="sys-demo-box">
+              <div class="discord-mock">
+                <div class="discord-mock-header">
+                  <span class="channel-icon">#</span> لوحة-التقارير
+                </div>
+                <div class="discord-mock-body">
+                  <div class="discord-msg">
+                    <div class="discord-avatar av-bot">B</div>
+                    <div class="discord-msg-content">
+                      <div class="discord-msg-author">Abonebal BOT <span class="bot-tag">BOT</span></div>
+                      <div class="discord-embed" style="--embed-color: #2758bb;">
+                        <div class="discord-embed-inner">
+                          <div class="discord-embed-title">🗂️ Sambo Family — لوحة تقارير الأعضاء</div>
+                          <div class="discord-embed-desc">اختر العملية من القائمة أدناه</div>
+                        </div>
+                      </div>
+                      <div class="discord-btns" style="flex-direction:column; align-items:flex-start; gap:4px;">
+                        <span style="background:#2b2d31; color:#dbdee1; padding:6px 12px; border-radius:4px; font-size:13px;">📋 رفع تقرير &nbsp; 🔍 استعلام عن تقاريري &nbsp; 👤 استعلام عن تقارير عضو</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="sys-commands-box">
+                <div class="sys-commands-title">الأوامر المتاحة</div>
+                <div class="command-row">
+                  <span class="command-name">!panel</span>
+                  <span class="command-desc">إرسال لوحة التحكم الرئيسية</span>
+                  <span class="command-perm">الجميع</span>
+                </div>
+                <div class="command-row">
+                  <span class="command-name">!top</span>
+                  <span class="command-desc">لوحة المتصدرين بالنقاط</span>
+                  <span class="command-perm">الجميع</span>
+                </div>
+                <div class="command-row">
+                  <span class="command-name">!stats / !stats day / !stats week</span>
+                  <span class="command-desc">إحصائيات التقارير</span>
+                  <span class="command-perm">الإدارة</span>
+                </div>
+                <div class="command-row">
+                  <span class="command-name">!نظام التقارير pause / resume</span>
+                  <span class="command-desc">تفعيل/إلغاء وضع الصيانة</span>
+                  <span class="command-perm">المطور</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ───────── TAB: BLACKLIST ───────── -->
+        <div class="tab-content" id="tab-blacklist">
+          <div class="sys-layout">
+            <div>
+              <div class="sys-info-box">
+                <span class="sys-icon">🚫</span>
+                <div class="sys-title">البلاك ليست</div>
+                <div class="sys-subtitle">إدارة قائمة الحظر مع توثيق كامل وإشعارات DM تلقائية لكل إجراء.</div>
+                <ul class="sys-feature-list">
+                  <li><span class="icon">➕</span> إضافة عضو للقائمة مع ذكر السبب والمسؤول</li>
+                  <li><span class="icon">➖</span> إزالة عضو من القائمة مع توثيق رسمي</li>
+                  <li><span class="icon">🔍</span> عرض بيانات عضو كامل من القائمة</li>
+                  <li><span class="icon">📄</span> عرض القائمة الكاملة بنظام صفحات</li>
+                  <li><span class="icon">✉️</span> DM تلقائي للعضو عند الإضافة أو الإزالة</li>
+                  <li><span class="icon">📋</span> قرار رسمي في قناة اللوق لكل إجراء</li>
+                  <li><span class="icon">🔗</span> تكامل مع نظام مراقبة المغادرة</li>
+                </ul>
+              </div>
+            </div>
+            <div class="sys-demo-box">
+              <div class="discord-mock">
+                <div class="discord-mock-header">
+                  <span class="channel-icon">#</span> لوق-البلاك-ليست
+                </div>
+                <div class="discord-mock-body">
+                  <div class="discord-msg">
+                    <div class="discord-avatar av-bot">B</div>
+                    <div class="discord-msg-content">
+                      <div class="discord-msg-author">Abonebal BOT <span class="bot-tag">BOT</span></div>
+                      <div class="discord-embed" style="--embed-color: #e74c3c;">
+                        <div class="discord-embed-inner">
+                          <div class="discord-embed-title">🚫 قرار البلاك ليست — Sambo Family</div>
+                          <div class="discord-embed-desc">
+                            تم إضافة <strong>@BadPlayer</strong> في قائمة الحظر<br/><br/>
+                            📋 السبب: سلوك مخالف لقوانين العائلة<br/>
+                            👑 بأمر من: @القائد<br/>
+                            🕐 التاريخ: &lt;t:1728000000:F&gt;
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="sys-commands-box">
+                <div class="sys-commands-title">الأوامر المتاحة</div>
+                <div class="command-row">
+                  <span class="command-name">!blfa @عضو [سبب]</span>
+                  <span class="command-desc">إضافة عضو للبلاك ليست</span>
+                  <span class="command-perm">الإدارة</span>
+                </div>
+                <div class="command-row">
+                  <span class="command-name">!blfr @عضو [سبب]</span>
+                  <span class="command-desc">إزالة عضو من البلاك ليست</span>
+                  <span class="command-perm">الإدارة</span>
+                </div>
+                <div class="command-row">
+                  <span class="command-name">!blf @عضو</span>
+                  <span class="command-desc">عرض بيانات عضو في القائمة</span>
+                  <span class="command-perm">الإدارة</span>
+                </div>
+                <div class="command-row">
+                  <span class="command-name">!blflist</span>
+                  <span class="command-desc">عرض القائمة الكاملة بصفحات</span>
+                  <span class="command-perm">الإدارة</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ───────── TAB: STATUS ───────── -->
+        <div class="tab-content" id="tab-status">
+          <div class="sys-layout">
+            <div>
+              <div class="sys-info-box">
+                <span class="sys-icon">👁️</span>
+                <div class="sys-title">حالة العائلة</div>
+                <div class="sys-subtitle">نظام مراقبة حضور ذكي يرصد دخول وخروج الأعضاء ويبني إحصائيات دقيقة بشكل تلقائي.</div>
+                <ul class="sys-feature-list">
+                  <li><span class="icon">🟢</span> رصد دخول أعضاء العائلة من قائمة الحضور</li>
+                  <li><span class="icon">🔴</span> رصد الخروج وتسجيل مدة الجلسة</li>
+                  <li><span class="icon">📅</span> ملخص يومي يتحدث تلقائياً بإحصائيات كل عضو</li>
+                  <li><span class="icon">⏱️</span> إجمالي وقت اللعب وعدد الجلسات اليومية</li>
+                  <li><span class="icon">⚠️</span> تحذير تلقائي عند الاسم المخالف لـ tag العائلة</li>
+                  <li><span class="icon">🗂️</span> أرشفة بيانات الغياب والحضور لكل عضو</li>
+                  <li><span class="icon">📲</span> رسائل خروج مخصصة لكل سيرفر</li>
+                </ul>
+              </div>
+            </div>
+            <div class="sys-demo-box">
+              <div class="discord-mock">
+                <div class="discord-mock-header">
+                  <span class="channel-icon">#</span> حضور-الأعضاء
+                </div>
+                <div class="discord-mock-body">
+                  <div class="discord-msg">
+                    <div class="discord-avatar av-bot">B</div>
+                    <div class="discord-msg-content">
+                      <div class="discord-msg-author">Abonebal BOT <span class="bot-tag">BOT</span></div>
+                      <div class="discord-embed" style="--embed-color: #5865f2;">
+                        <div class="discord-embed-inner">
+                          <div class="discord-embed-title">📋 ملخص جلسات اليوم — Sambo Family</div>
+                          <div class="discord-embed-desc">
+                            <strong>اللاعب:</strong> <code>Ahmed_Sambo</code><br/>
+                            <strong>الرتبة:</strong> عضو<br/><br/>
+                            🟢 وقت أول دخول: &lt;t:1728000000:T&gt;<br/><br/>
+                            📊 إحصائيات اليوم:<br/>
+                            &gt; • عدد الجلسات: <strong>3</strong><br/>
+                            &gt; • إجمالي وقت اللعب: <strong>4س 23د</strong>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="highlight-box">
+                💡 النظام يعمل بشكل كامل تلقائي — لا حاجة لأوامر يدوية.
+                فقط يراقب الرسائل في قناة الحضور ويبني البيانات لحظة بلحظة.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ══════════════════ STATS ══════════════════════ -->
+    <section id="stats-section">
+      <div class="section-tag">الأرقام تتحدث</div>
+      <h2 class="section-title">قدرات النظام بالأرقام</h2>
+      <p class="section-desc">كل رقم هنا يعكس ميزة حقيقية داخل الكود.</p>
+      <div class="stats-grid">
+        <div class="stat-card reveal" style="--stat-color: var(--purple);">
+          <div class="stat-icon">⚙️</div>
+          <div class="stat-number">8</div>
+          <div class="stat-label">أنظمة متكاملة</div>
+        </div>
+        <div class="stat-card reveal" style="--stat-color: var(--green);">
+          <div class="stat-icon">🔄</div>
+          <div class="stat-number">0</div>
+          <div class="stat-label">إعادة تشغيل عند التعديل</div>
+        </div>
+        <div class="stat-card reveal" style="--stat-color: var(--blue);">
+          <div class="stat-icon">🌐</div>
+          <div class="stat-number">∞</div>
+          <div class="stat-label">سيرفر مدعوم</div>
+        </div>
+        <div class="stat-card reveal" style="--stat-color: var(--gold);">
+          <div class="stat-icon">🤖</div>
+          <div class="stat-number">100%</div>
+          <div class="stat-label">أتمتة كاملة</div>
+        </div>
+        <div class="stat-card reveal" style="--stat-color: var(--cyan);">
+          <div class="stat-icon">📊</div>
+          <div class="stat-number">24/7</div>
+          <div class="stat-label">مراقبة مستمرة</div>
+        </div>
+        <div class="stat-card reveal" style="--stat-color: var(--red);">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-number">V2</div>
+          <div class="stat-label">Discord Components</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ══════════════════ GLOBAL FEATURES ═══════════════ -->
+    <section class="section">
+      <div class="section-tag">مزايا عامة</div>
+      <h2 class="section-title">ما يميز كل نظام</h2>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px;">
+        <div class="highlight-box reveal" style="margin:0;">
+          <div style="font-size:24px; margin-bottom:8px;">🔄</div>
+          <strong>تحديث فوري بدون ريستارت</strong><br/>
+          <span style="font-size:13px;">تعديل أي إعداد في ملف السيرفر يُطبَّق فوراً — بدون إيقاف البوت.</span>
+        </div>
+        <div class="highlight-box reveal" style="margin:0;">
+          <div style="font-size:24px; margin-bottom:8px;">🌐</div>
+          <strong>دعم متعدد السيرفرات</strong><br/>
+          <span style="font-size:13px;">كل سيرفر له ملف config مستقل — إضافة سيرفر جديد لا تحتاج كود إضافي.</span>
+        </div>
+        <div class="highlight-box reveal" style="margin:0;">
+          <div style="font-size:24px; margin-bottom:8px;">🔛</div>
+          <strong>تفعيل وإيقاف فوري</strong><br/>
+          <span style="font-size:13px;">كل نظام له مفتاح on/off مستقل — عطّل أي نظام دون التأثير على البقية.</span>
+        </div>
+        <div class="highlight-box reveal" style="margin:0;">
+          <div style="font-size:24px; margin-bottom:8px;">🛡️</div>
+          <strong>تحكم كامل بالصلاحيات</strong><br/>
+          <span style="font-size:13px;">حدد من يستطيع استخدام كل أمر عبر قوائم رتب مخصصة لكل سيرفر.</span>
+        </div>
+        <div class="highlight-box reveal" style="margin:0;">
+          <div style="font-size:24px; margin-bottom:8px;">📦</div>
+          <strong>بنية نظيفة وقابلة للتوسع</strong><br/>
+          <span style="font-size:13px;">ملف واحد يستدعي كل الكود — إضافة ميزة جديدة تعمل بدون تعديل index.js.</span>
+        </div>
+        <div class="highlight-box reveal" style="margin:0;">
+          <div style="font-size:24px; margin-bottom:8px;">✉️</div>
+          <strong>إشعارات DM محمية</strong><br/>
+          <span style="font-size:13px;">كل الـ DMs محاطة بـ try/catch — العضو المُغلق للرسائل لا يوقف البوت.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════ FOOTER ══════════════════════ -->
+    <footer>
+      <div class="footer-logo">Abonebal</div>
+      <div class="footer-sub">Family System — Discord Bot Management Suite</div>
+      <div style="display:flex; gap:12px; justify-content:center; margin-bottom:24px; flex-wrap:wrap;">
+        <span class="badge-pill badge-on">● نظام نشط</span>
+        <span class="badge-pill badge-auto">⚡ 8 أنظمة</span>
+        <span class="badge-pill badge-on">🔄 تحديث فوري</span>
+      </div>
+      <div class="footer-copy">
+        © 2026 <span>Abonebal</span> — جميع الحقوق محفوظة · تطوير حصري لا يجوز نسخه أو توزيعه
+      </div>
+    </footer>
+
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ═══════════════════════════════ MODALS ═══════════════════════════════════ -->
+
+<!-- Modal: Recruit -->
+<div class="modal-overlay" id="modal-recruit" onclick="closeModalOutside(event,'modal-recruit')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🎖️ أمر التجنيد — تفاصيل كاملة</div>
+      <button class="modal-close" onclick="closeModal('modal-recruit')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="modal-section-title">آلية العمل</div>
+        <p style="font-size:14px; color:var(--text-secondary); line-height:1.8;">
+          عند كتابة <code style="background:rgba(88,101,242,0.15);padding:2px 6px;border-radius:4px;color:#8891f5;">!تجنيد</code> بالرد على رسالة عضو،
+          يبدأ البوت سلسلة مؤتمتة: يطلب تأكيداً بزرَّي نعم/لا، ثم يطلب اسم اللاعب
+          داخل MTA مع عداد 120 ثانية، ثم ينفّذ جميع الإجراءات دفعة واحدة.
+        </p>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">إعدادات الكونفيغ الرئيسية</div>
+        <table class="config-table">
+          <tr><th>المتغير</th><th>الوصف</th></tr>
+          <tr><td><span class="config-key">codeStatus</span></td><td>"on" لتفعيل الأمر، "off" لإيقافه</td></tr>
+          <tr><td><span class="config-key">allowedRoles</span></td><td>الرتب المسموح لها باستخدام الأمر</td></tr>
+          <tr><td><span class="config-key">rolesToGive</span></td><td>الرتب التي تُعطى للعضو الجديد</td></tr>
+          <tr><td><span class="config-key">recruitCategoryId</span></td><td>الكاتيغوري التي تُنشأ بداخلها روم العضو</td></tr>
+          <tr><td><span class="config-key">recruitLogChannelId</span></td><td>قناة قرار التوظيف الرسمي</td></tr>
+          <tr><td><span class="config-key">sectorRoles</span></td><td>القطاعات مع الكلمات المفتاحية لكل قطاع</td></tr>
+          <tr><td><span class="config-key">memberPermissions</span></td><td>صلاحيات العضو في روومه الجديد</td></tr>
+          <tr><td><span class="config-key">adminRoomRoles</span></td><td>الرتب الإدارية التي تدخل روم العضو</td></tr>
+          <tr><td><span class="config-key">reminderTimeout</span></td><td>مدة الانتظار قبل إرسال تذكير (ثواني)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Kick -->
+<div class="modal-overlay" id="modal-kick" onclick="closeModalOutside(event,'modal-kick')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">⚡ أمر الفصل — تفاصيل كاملة</div>
+      <button class="modal-close" onclick="closeModal('modal-kick')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="modal-section-title">آلية العمل</div>
+        <p style="font-size:14px; color:var(--text-secondary); line-height:1.8;">
+          يكتب المسؤول <code style="background:rgba(88,101,242,0.15);padding:2px 6px;border-radius:4px;color:#8891f5;">!فصل @العضو السبب</code>
+          فيقوم البوت فوراً بسحب الرتب، حذف اللقب، نقل الروم لكاتيغوري المفصولين،
+          إرسال قرار رسمي في القناة المخصصة، وإرسال DM للعضو المفصول.
+        </p>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">إعدادات الكونفيغ الرئيسية</div>
+        <table class="config-table">
+          <tr><th>المتغير</th><th>الوصف</th></tr>
+          <tr><td><span class="config-key">allowedRoles</span></td><td>الرتب المسموح لها بتنفيذ الفصل</td></tr>
+          <tr><td><span class="config-key">removableRoles</span></td><td>الرتب التي تُسحب من العضو</td></tr>
+          <tr><td><span class="config-key">kickLogChannelId</span></td><td>قناة قرار الفصل الرسمي</td></tr>
+          <tr><td><span class="config-key">kickedCategoryId</span></td><td>كاتيغوري ينقل إليها روم العضو بعد الفصل</td></tr>
+          <tr><td><span class="config-key">kickPingRole</span></td><td>الرول الذي يُنشن في قرار الفصل</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Vacation -->
+<div class="modal-overlay" id="modal-vacation" onclick="closeModalOutside(event,'modal-vacation')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🏖️ نظام الإجازات — تفاصيل كاملة</div>
+      <button class="modal-close" onclick="closeModal('modal-vacation')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="modal-section-title">أزرار اللوحة التفاعلية</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div class="highlight-box" style="margin:0;">✅ <strong>طلب إجازة</strong><br/><span style="font-size:13px;">فورم تفاعلي بالمدة والسبب</span></div>
+          <div class="highlight-box" style="margin:0;">🔓 <strong>كسر عذر</strong><br/><span style="font-size:13px;">إنهاء الإجازة والعودة مبكراً</span></div>
+          <div class="highlight-box" style="margin:0;">👤 <strong>عرض الإجازات</strong><br/><span style="font-size:13px;">للإدارة — كل الإجازات النشطة</span></div>
+          <div class="highlight-box" style="margin:0;">❌ <strong>سحب الطلب</strong><br/><span style="font-size:13px;">قبل اتخاذ قرار الإدارة</span></div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">إعدادات الكونفيغ</div>
+        <table class="config-table">
+          <tr><th>المتغير</th><th>الوصف</th></tr>
+          <tr><td><span class="config-key">adminRoleIds</span></td><td>الرتب التي تقبل/ترفض الإجازات</td></tr>
+          <tr><td><span class="config-key">vacationRoleId</span></td><td>رول الإجازة يُمنح ويُسحب تلقائياً</td></tr>
+          <tr><td><span class="config-key">requestsChannelId</span></td><td>قناة استقبال طلبات الإجازة</td></tr>
+          <tr><td><span class="config-key">decisionsChannelId</span></td><td>قناة نشر قرارات القبول/الرفض</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Fines -->
+<div class="modal-overlay" id="modal-fines" onclick="closeModalOutside(event,'modal-fines')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">💰 نظام الغرامات — تفاصيل كاملة</div>
+      <button class="modal-close" onclick="closeModal('modal-fines')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="modal-section-title">ميزة التذكير اليومي</div>
+        <p style="font-size:14px; color:var(--text-secondary); line-height:1.8;">
+          في الوقت المحدد (UTC) يرسل البوت تلقائياً رسالة DM لكل عضو لديه غرامة غير مسددة،
+          ورسالة في روومه الخاص، بالإضافة لتقرير إداري في القناة المخصصة.
+        </p>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">إعدادات الكونفيغ</div>
+        <table class="config-table">
+          <tr><th>المتغير</th><th>الوصف</th></tr>
+          <tr><td><span class="config-key">allowedRoles</span></td><td>الرتب التي تفرض الغرامات</td></tr>
+          <tr><td><span class="config-key">logChannelId</span></td><td>قناة قرارات الغرامات</td></tr>
+          <tr><td><span class="config-key">myFinesChannelId</span></td><td>القناة التي يستخدم فيها الجميع !غراماتي</td></tr>
+          <tr><td><span class="config-key">reminderEnabled</span></td><td>تفعيل التذكير اليومي true/false</td></tr>
+          <tr><td><span class="config-key">reminderTime</span></td><td>وقت إرسال التذكير بتوقيت UTC</td></tr>
+          <tr><td><span class="config-key">reminderDmMessage</span></td><td>رسالة DM مع متغيرات {name} {amount}</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Rewards -->
+<div class="modal-overlay" id="modal-rewards" onclick="closeModalOutside(event,'modal-rewards')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🏆 نظام المكافآت — تفاصيل كاملة</div>
+      <button class="modal-close" onclick="closeModal('modal-rewards')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="modal-section-title">دورة حياة المكافأة</div>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-line"><div class="flow-step-dot">1</div><div class="flow-step-connector"></div></div>
+            <div class="flow-step-body"><div class="flow-step-title">إصدار المكافأة</div><div class="flow-step-desc">المسؤول يكتب الأمر — القرار يُنشر 🟡 معلق</div></div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-line"><div class="flow-step-dot">2</div><div class="flow-step-connector"></div></div>
+            <div class="flow-step-body"><div class="flow-step-title">تذكير يومي</div><div class="flow-step-desc">DM + روم العضو حتى يتم الصرف</div></div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-line"><div class="flow-step-dot">3</div></div>
+            <div class="flow-step-body"><div class="flow-step-title">تأكيد الصرف</div><div class="flow-step-desc">المسؤول يؤكد — القرار يتحول ✅ مدفوع</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">الإيموجيات المخصصة</div>
+        <table class="config-table">
+          <tr><th>المتغير</th><th>الوصف</th></tr>
+          <tr><td><span class="config-key">pendingEmoji</span></td><td>إيموجي المكافأة المعلقة (افتراضي 🟡)</td></tr>
+          <tr><td><span class="config-key">paidEmoji</span></td><td>إيموجي المكافأة المصروفة (افتراضي ✅)</td></tr>
+          <tr><td><span class="config-key">goldEmoji</span></td><td>إيموجي عنوان القرار (افتراضي 🏆)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Panel -->
+<div class="modal-overlay" id="modal-panel" onclick="closeModalOutside(event,'modal-panel')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🗂️ لوحة التقارير — تفاصيل كاملة</div>
+      <button class="modal-close" onclick="closeModal('modal-panel')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="modal-section-title">خيارات لوحة التحكم</div>
+        <table class="config-table">
+          <tr><th>الخيار</th><th>الوصف</th><th>الصلاحية</th></tr>
+          <tr><td>📋 رفع تقرير</td><td>اختيار نوع التقرير ثم ملء الفورم</td><td>الجميع</td></tr>
+          <tr><td>🔍 استعلام عن تقاريري</td><td>تقاريرك المقبولة والمرفوضة</td><td>الجميع</td></tr>
+          <tr><td>👤 استعلام عن تقارير عضو</td><td>تقارير أي عضو</td><td>الإدارة</td></tr>
+          <tr><td>🔴 تصفير تقارير عضو</td><td>إعادة عداد التقارير لصفر</td><td>الإدارة</td></tr>
+          <tr><td>📣 تذكير جميع الأعضاء</td><td>DM جماعي لكل أعضاء العائلة</td><td>الإدارة</td></tr>
+        </table>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">نظام الطعن</div>
+        <p style="font-size:14px; color:var(--text-secondary); line-height:1.8;">
+          عند رفض تقرير → العضو يستلم DM بزر "طعن في القرار" → يفتح modal لكتابة حجته
+          → طلب الطعن يصل للإدارة → الإدارة تقبل أو ترفض → DM للعضو بالقرار النهائي.
+          كل عضو له طعن واحد فقط لكل تقرير.
+        </p>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">وضع الصيانة</div>
+        <p style="font-size:14px; color:var(--text-secondary); line-height:1.8;">
+          يوقف النظام مؤقتاً دون إيقاف البوت. يُحفظ في ملف JSON ويبقى مفعّلاً حتى بعد
+          إعادة التشغيل. الأعضاء يرون رسالة صيانة مخصصة.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Blacklist -->
+<div class="modal-overlay" id="modal-blacklist" onclick="closeModalOutside(event,'modal-blacklist')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🚫 البلاك ليست — تفاصيل كاملة</div>
+      <button class="modal-close" onclick="closeModal('modal-blacklist')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="modal-section-title">ما يُسجَّل لكل عضو</div>
+        <table class="config-table">
+          <tr><th>الحقل</th><th>الوصف</th></tr>
+          <tr><td><span class="config-key">userId</span></td><td>ID العضو على Discord</td></tr>
+          <tr><td><span class="config-key">username</span></td><td>اسم العضو وقت الإضافة</td></tr>
+          <tr><td><span class="config-key">reason</span></td><td>سبب الإدراج في القائمة</td></tr>
+          <tr><td><span class="config-key">addedBy</span></td><td>المسؤول الذي أضاف العضو</td></tr>
+          <tr><td><span class="config-key">timestamp</span></td><td>تاريخ ووقت الإضافة</td></tr>
+        </table>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">التكامل مع نظام المغادرة</div>
+        <p style="font-size:14px; color:var(--text-secondary); line-height:1.8;">
+          عند فصل عضو عبر "أمر الفصل"، يُضاف تلقائياً للبلاك ليست. كما أن نظام مراقبة
+          المغادرة يضيف أي عضو يغادر السيرفر ويحمل الرتبة المستهدفة تلقائياً.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Status -->
+<div class="modal-overlay" id="modal-status" onclick="closeModalOutside(event,'modal-status')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">👁️ حالة العائلة — تفاصيل كاملة</div>
+      <button class="modal-close" onclick="closeModal('modal-status')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <div class="modal-section-title">ما يُتتبع لكل عضو يومياً</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div class="highlight-box" style="margin:0;">⏰ <strong>وقت أول دخول</strong><br/><span style="font-size:13px;">timestamp دقيق</span></div>
+          <div class="highlight-box" style="margin:0;">📊 <strong>عدد الجلسات</strong><br/><span style="font-size:13px;">كم مرة دخل وخرج</span></div>
+          <div class="highlight-box" style="margin:0;">⏱️ <strong>إجمالي وقت اللعب</strong><br/><span style="font-size:13px;">ساعات ودقائق دقيقة</span></div>
+          <div class="highlight-box" style="margin:0;">⚠️ <strong>تحذير الاسم المخالف</strong><br/><span style="font-size:13px;">إذا لا يحتوي tag العائلة</span></div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-title">إعدادات الكونفيغ</div>
+        <table class="config-table">
+          <tr><th>المتغير</th><th>الوصف</th></tr>
+          <tr><td><span class="config-key">familyTag</span></td><td>وسم العائلة في الاسم للتحقق</td></tr>
+          <tr><td><span class="config-key">logChannelId</span></td><td>قناة نشر ملخصات الجلسات</td></tr>
+          <tr><td><span class="config-key">errorLogChannelId</span></td><td>قناة إرسال أخطاء النظام</td></tr>
+          <tr><td><span class="config-key">messageFile</span></td><td>ملف رسالة الخروج المخصصة</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCRIPTS ══════════════════════════════════ -->
+<script>
+// ── Particles ──────────────────────────────────────────────────────────────
+(function() {
+  const bg = document.getElementById('particles-bg');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      top:${Math.random()*100}%; left:${Math.random()*100}%;
+      --d:${Math.random()*4+2}s;
+      --o:${Math.random()*0.7+0.3};
+      animation-delay:${Math.random()*5}s;
+    `;
+    bg.appendChild(s);
+  }
+})();
+
+// ── Sidebar ─────────────────────────────────────────────────────────────────
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+}
+function setActive(el) {
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  if (window.innerWidth <= 1024) closeSidebar();
+}
+
+// ── Tabs ────────────────────────────────────────────────────────────────────
+function switchTab(tabId) {
+  // deactivate all
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  // activate target
+  const content = document.getElementById('tab-' + tabId);
+  if (content) content.classList.add('active');
+  const btn = document.querySelector(`[data-tab="${tabId}"]`);
+  if (btn) {
+    btn.classList.add('active');
+    btn.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
+  }
+  // scroll to systems section
+  const sys = document.getElementById('systems');
+  if (sys) {
+    setTimeout(() => {
+      sys.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  }
+}
+
+// ── Modals ──────────────────────────────────────────────────────────────────
+function openModal(id) {
+  const m = document.getElementById(id);
+  if (m) {
+    m.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+}
+function closeModal(id) {
+  const m = document.getElementById(id);
+  if (m) {
+    m.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+function closeModalOutside(e, id) {
+  if (e.target === e.currentTarget) closeModal(id);
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => {
+      m.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  }
+});
+
+// ── Scroll Reveal ────────────────────────────────────────────────────────────
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 60);
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ── Animated Counters ────────────────────────────────────────────────────────
+function animateCount(el, target, suffix) {
+  let start = 0;
+  const step = target / 40;
+  const timer = setInterval(() => {
+    start += step;
+    if (start >= target) { el.textContent = target + (suffix||''); clearInterval(timer); return; }
+    el.textContent = Math.floor(start) + (suffix||'');
+  }, 30);
+}
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const text = el.textContent;
+      if (text === '8') animateCount(el, 8, '');
+      else if (text === '100%') { let s=0; const t=setInterval(()=>{s+=3;if(s>=100){el.textContent='100%';clearInterval(t);}else{el.textContent=s+'%';}},20); }
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.hero-stat-number, .stat-number').forEach(el => {
+  if (!isNaN(parseInt(el.textContent))) counterObserver.observe(el);
+});
+
+// ── Active sidebar on scroll ─────────────────────────────────────────────────
+const sections = ['hero','overview','systems','stats-section'];
+const sectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      const link = document.querySelector(`.sidebar-item[href="#${id}"]`);
+      if (link) {
+        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+        link.classList.add('active');
+      }
+    }
+  });
+}, { threshold: 0.4 });
+sections.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) sectionObserver.observe(el);
+});
+
+// ── Feature cards animation delay ────────────────────────────────────────────
+document.querySelectorAll('.feature-card').forEach((card, i) => {
+  card.style.animationDelay = (i * 0.08) + 's';
+});
+
+// ── Card hover 3D tilt effect ─────────────────────────────────────────────────
+document.querySelectorAll('.feature-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -4;
+    const rotateY = ((x - centerX) / centerX) * 4;
+    card.style.transform = `translateY(-6px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+  });
+});
+</script>
+<!-- ── Page view counter ── -->
+<script>
+(async function() {
+  try {
+    // زيادة عداد الزوار عند فتح الصفحة
+    await fetch('https://api.counterapi.dev/v1/abonebal-portfolio/family-system-showcase/up');
+  } catch {}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+/* ═══════════════════════════════════════════════════
+   variables.css — CSS Custom Properties
+   ═══════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* ── Colors ── */
+  --purple:    #8a2be2;
+  --purple-l:  #b06ef0;
+  --purple-g:  rgba(138,43,226,0.25);
+  --purple-g2: rgba(138,43,226,0.10);
+  --blue:      #5865f2;
+  --cyan:      #00d4ff;
+  --green:     #57f287;
+  --red:       #ed4245;
+  --gold:      #f0a500;
+
+  /* ── Dark Theme (default) ── */
+  --bg:        #07070f;
+  --bg2:       #0d0d1a;
+  --bg3:       #111122;
+  --glass:     rgba(255,255,255,0.04);
+  --glass2:    rgba(255,255,255,0.07);
+  --glass3:    rgba(255,255,255,0.11);
+  --border:    rgba(255,255,255,0.08);
+  --border2:   rgba(138,43,226,0.35);
+  --txt:       #f0f0ff;
+  --txt2:      #a0a0c0;
+  --txt3:      #606090;
+
+  /* ── Sidebar (always dark — CodePen style) ── */
+  --sb-bg:     #18283b;
+  --sb-bg2:    #2c3e50;
+  --sb-accent: #9c88ff;
+  --sb-txt:    #f5f6fa;
+  --sb-txt2:   #8392a5;
+  --sb-w:      256px;
+  --sb-min:    72px;
+
+  /* ── Layout ── */
+  --nb-h:      54px;
+  --r:         16px;
+  --r-sm:      10px;
+
+  /* ── Typography ── */
+  --font:      'Cairo', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* ── Transitions ── */
+  --tr:        0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --tr-fast:   0.15s ease;
+
+  /* ── Shadows ── */
+  --shadow:    0 8px 32px rgba(0,0,0,0.5);
+  --shadow-sm: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+/* ── Light Theme ── */
+[data-theme="light"] {
+  --bg:      #f0f0fa;
+  --bg2:     #ffffff;
+  --bg3:     #e8e8f5;
+  --glass:   rgba(0,0,0,0.03);
+  --glass2:  rgba(0,0,0,0.06);
+  --glass3:  rgba(0,0,0,0.09);
+  --border:  rgba(0,0,0,0.10);
+  --border2: rgba(138,43,226,0.30);
+  --txt:     #1a1a2e;
+  --txt2:    #4a4a6a;
+  --txt3:    #8a8aaa;
+}

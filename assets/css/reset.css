@@ -1,0 +1,69 @@
+/* ═══════════════════════════════════════════════════
+   reset.css — Base reset & global styles
+   ═══════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--txt);
+  min-height: 100vh;
+  overflow: hidden;           /* fullpage handles scroll */
+  cursor: none;
+  transition: background var(--tr), color var(--tr);
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 2px; }
+
+a { color: inherit; text-decoration: none; }
+button { font-family: var(--font); cursor: pointer; border: none; background: none; }
+img { max-width: 100%; display: block; }
+
+/* ── Background layers ── */
+#bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+.bg-glow {
+  position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+  filter: blur(110px);
+  animation: gfloat 12s ease-in-out infinite;
+}
+.bg-glow-1 { width:600px; height:600px; background:rgba(138,43,226,.07); top:-15%; left:25%; }
+.bg-glow-2 { width:400px; height:400px; background:rgba(88,101,242,.05); bottom:5%;  right:8%; animation-delay:-5s; }
+.bg-glow-3 { width:280px; height:280px; background:rgba(0,212,255,.04);  top:45%;    left:8%; animation-delay:-3s; }
+
+@keyframes gfloat {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-28px); }
+}
+
+.grid-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(138,43,226,.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(138,43,226,.022) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 80%);
+}
+
+/* ── Scroll progress bar ── */
+#progress-bar {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 9999;
+  background: linear-gradient(90deg, var(--purple), var(--cyan), var(--gold));
+  transform-origin: left; transform: scaleX(0);
+  transition: transform .1s linear;
+  pointer-events: none;
+}
+
+/* ── Mobile overlay ── */
+#sidebar-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(4px);
+  z-index: 490; display: none;
+}
+#sidebar-overlay.show { display: block; }
