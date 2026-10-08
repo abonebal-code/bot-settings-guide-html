@@ -90,7 +90,7 @@ const Projects = (() => {
 
     grid.innerHTML = files.map((f, i) => {
       const url     = base + f.name;
-      const name    = f.name.replace(/\.html$/i,'').replace(/[-_]/g,' ');
+      const name    = f.name.replace(/\.html$/i, ''); // اسم الملف بدون امتداد فقط
       const icon    = _icon(f.name);
       // key للعداد — اسم الملف بدون امتداد
       const cKey    = f.name.replace(/\.html$/i,'').replace(/[^a-z0-9]/gi,'-').toLowerCase();

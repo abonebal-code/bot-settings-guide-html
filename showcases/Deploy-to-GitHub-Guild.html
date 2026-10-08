@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GitDeploy — by Abonebal</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;600;700;900&family=Cairo:wght@400;600;700;900&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07070f;--bg2:#0d0d1a;--bg3:#111122;
+  --glass:rgba(255,255,255,0.04);--glass2:rgba(255,255,255,0.07);
+  --border:rgba(255,255,255,0.08);
+  --purple:#8a2be2;--purple-l:#b06ef0;--purple-g:rgba(138,43,226,0.25);
+  --green:#57f287;--gold:#f0a500;--blue:#5865f2;--cyan:#00d4ff;--red:#ed4245;
+  --txt:#f0f0ff;--txt2:#a0a0c0;--txt3:#606090;
+  --mono:'JetBrains Mono',monospace;
+  --font:'Inter',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--txt);line-height:1.7;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:var(--purple);border-radius:3px}
+
+/* BG */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%,rgba(138,43,226,.12) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 30% at 80% 80%,rgba(88,101,242,.07) 0%,transparent 60%);
+}
+
+/* LAYOUT */
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 24px 80px}
+
+/* HERO */
+.hero{
+  text-align:center;padding:72px 0 56px;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,rgba(138,43,226,.2),rgba(88,101,242,.15));
+  border:1px solid rgba(138,43,226,.4);border-radius:50px;
+  padding:7px 18px;font-size:12px;color:var(--purple-l);
+  margin-bottom:24px;letter-spacing:1px;
+}
+.badge-dot{width:7px;height:7px;background:var(--green);border-radius:50%;box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
+.hero h1{
+  font-size:clamp(40px,8vw,72px);font-weight:900;letter-spacing:-2px;
+  background:linear-gradient(135deg,#fff 0%,var(--purple-l) 45%,var(--cyan) 85%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:10px;
+}
+.hero-sub{font-size:16px;color:var(--txt2);margin-bottom:36px}
+.hero-version{
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:12px;color:var(--txt3);
+  background:var(--glass);border:1px solid var(--border);
+  padding:5px 14px;border-radius:50px;
+}
+
+/* STATS ROW */
+.stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;margin:36px 0 0}
+.stat{text-align:center}
+.stat-n{font-size:28px;font-weight:900;background:linear-gradient(135deg,var(--purple-l),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-l{font-size:11px;color:var(--txt3);margin-top:3px}
+
+/* DIVIDER */
+.grad-hr{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:48px 0}
+
+/* SECTION */
+.section{margin-bottom:48px}
+.section-tag{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--purple-l);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.section-tag::before{content:'';width:16px;height:2px;background:linear-gradient(90deg,var(--purple),transparent)}
+.section h2{font-size:clamp(22px,3vw,32px);font-weight:900;margin-bottom:12px}
+.section p{color:var(--txt2);font-size:15px;line-height:1.8;margin-bottom:16px}
+
+/* CARDS GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:24px}
+.card{
+  background:var(--glass);border:1px solid var(--border);border-radius:16px;
+  padding:22px;transition:all .3s;position:relative;overflow:hidden;
+}
+.card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--card-c,rgba(138,43,226,.07)),transparent);opacity:0;transition:opacity .3s}
+.card:hover{transform:translateY(-4px);border-color:var(--card-c,rgba(138,43,226,.4));box-shadow:0 10px 32px rgba(0,0,0,.4)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:12px;display:block}
+.card-title{font-size:15px;font-weight:700;margin-bottom:6px}
+.card-desc{font-size:13px;color:var(--txt2);line-height:1.7}
+
+/* FILE TREE */
+.tree{
+  background:var(--bg2);border:1px solid var(--border);border-radius:14px;
+  padding:24px 28px;font-family:var(--mono);font-size:13px;
+  margin:20px 0;line-height:2;
+}
+.tree-folder{color:var(--gold)}
+.tree-file{color:var(--txt2)}
+.tree-comment{color:var(--txt3)}
+.tree-private{color:var(--red)}
+.tree-auto{color:var(--txt3);font-style:italic}
+
+/* CODE BLOCK */
+.code-block{
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:20px 24px;font-family:var(--mono);font-size:13px;
+  margin:16px 0;overflow-x:auto;position:relative;
+}
+.code-block .prompt{color:var(--txt3)}
+.code-block .cmd{color:var(--cyan)}
+.code-block .arg{color:var(--green)}
+.code-label{font-size:11px;color:var(--txt3);margin-bottom:8px;font-family:var(--mono);letter-spacing:1px}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:16px;align-items:flex-start}
+.step-line{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.step-dot{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),var(--blue));
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:#fff;
+  box-shadow:0 2px 10px var(--purple-g);flex-shrink:0;
+}
+.step-connector{width:2px;flex:1;min-height:20px;background:linear-gradient(180deg,var(--purple),transparent);margin:4px 0}
+.step-body{padding-bottom:20px;flex:1}
+.step-title{font-size:14px;font-weight:700;margin-bottom:4px}
+.step-desc{font-size:13px;color:var(--txt2)}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}
+th{background:rgba(138,43,226,.1);color:var(--purple-l);padding:10px 14px;text-align:left;font-size:12px;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--txt2)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--glass)}
+td code{font-family:var(--mono);color:var(--cyan);font-size:12px;background:rgba(0,212,255,.08);padding:2px 6px;border-radius:4px}
+
+/* HIGHLIGHT BOX */
+.note{
+  background:linear-gradient(135deg,rgba(138,43,226,.1),rgba(88,101,242,.08));
+  border:1px solid rgba(138,43,226,.25);border-radius:12px;
+  padding:16px 20px;font-size:13px;color:var(--txt2);margin:16px 0;
+  display:flex;gap:10px;align-items:flex-start;
+}
+.note-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+
+.warn{
+  background:rgba(237,66,69,.08);border:1px solid rgba(237,66,69,.25);
+  border-radius:12px;padding:16px 20px;font-size:13px;color:var(--txt2);margin:16px 0;
+  display:flex;gap:10px;align-items:flex-start;
+}
+
+/* TERMINAL MOCK */
+.terminal{
+  background:#0d1117;border:1px solid rgba(255,255,255,.06);border-radius:14px;
+  overflow:hidden;margin:20px 0;
+}
+.term-header{
+  background:#161b22;padding:10px 16px;display:flex;align-items:center;gap:8px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.term-dot{width:12px;height:12px;border-radius:50%}
+.term-title{font-size:12px;color:var(--txt3);font-family:var(--mono);margin-right:auto}
+.term-body{padding:20px 24px;font-family:var(--mono);font-size:13px;line-height:2}
+.t-step{color:var(--cyan);font-weight:700}
+.t-ok{color:var(--green)}
+.t-warn{color:var(--gold)}
+.t-err{color:var(--red)}
+.t-dim{color:var(--txt3)}
+.t-file-a{color:var(--green)}
+.t-file-m{color:var(--gold)}
+.t-file-d{color:var(--red)}
+.t-url{color:var(--cyan);text-decoration:underline}
+.t-purple{color:var(--purple-l)}
+
+/* FOOTER */
+footer{
+  text-align:center;padding:40px 0 0;
+  border-top:1px solid var(--border);
+}
+.footer-name{font-size:20px;font-weight:900;background:linear-gradient(135deg,var(--purple-l),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.footer-copy{font-size:12px;color:var(--txt3);margin-top:8px}
+.footer-copy span{color:var(--purple-l);font-weight:700}
+
+/* LANG TOGGLE */
+.lang-bar{
+  position:fixed;top:16px;right:16px;z-index:100;
+  display:flex;gap:8px;
+}
+.lang-btn{
+  padding:7px 16px;border-radius:50px;
+  background:rgba(10,10,24,.85);
+  backdrop-filter:blur(12px);
+  border:1px solid var(--border);
+  color:var(--txt2);font-size:12px;font-weight:700;
+  cursor:pointer;font-family:var(--font);
+  transition:all .2s;letter-spacing:.5px;
+}
+.lang-btn:hover{border-color:var(--purple);color:var(--purple-l)}
+.lang-btn.active{
+  background:linear-gradient(135deg,var(--purple),var(--blue));
+  border-color:transparent;color:#fff;
+  box-shadow:0 4px 16px var(--purple-g);
+}
+
+/* Hide/show by language */
+html[lang="ar"] .en-only { display: none !important; }
+html[lang="en"] .ar-only { display: none !important; }
+
+/* RTL adjustments */
+html[lang="ar"] body { font-family: 'Cairo', var(--font); }
+html[lang="ar"] .section-tag::before { right: auto; }
+html[lang="ar"] .lang-bar { right: auto; left: 16px; }
+.discord-cta{
+  text-align:center;padding:48px 0 0;
+}
+.discord-cta p{color:var(--txt2);font-size:15px;margin-bottom:24px}
+.btn-discord{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:14px 32px;border-radius:50px;
+  background:linear-gradient(135deg,#5865f2,#8a2be2);
+  color:#fff;font-size:15px;font-weight:700;
+  border:none;cursor:pointer;font-family:var(--font);
+  box-shadow:0 6px 24px rgba(88,101,242,.45);
+  transition:all .25s;text-decoration:none;
+}
+.btn-discord:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(88,101,242,.6)}
+.btn-discord-icon{font-size:20px}
+</style>
+</head>
+<body>
+
+<!-- LANG TOGGLE -->
+<div class="lang-bar">
+  <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" id="btn-ar" onclick="setLang('ar')">عر</button>
+</div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge"><span class="badge-dot"></span> <span class="en-only"></span>Auto-deploy tool for GitHub</span><span class="ar-only">أداة نشر تلقائية لـ GitHub</span></div>
+    <h1>GitDeploy</h1>
+    <p class="hero-sub en-only">Deploy any project to GitHub Pages with a single double-click</p>
+    <p class="hero-sub ar-only">انشر أي مشروع على GitHub Pages بنقرة مزدوجة واحدة</p>
+    <div class="hero-version">⚡ v2.0 &nbsp;·&nbsp; by Abonebal &nbsp;·&nbsp; PowerShell</div>
+    <div class="stats">
+      <div class="stat"><div class="stat-n">1</div><div class="stat-l en-only">Double-click</div><div class="stat-l ar-only">نقرة مزدوجة</div></div>
+      <div class="stat"><div class="stat-n">7</div><div class="stat-l en-only">Steps automated</div><div class="stat-l ar-only">خطوة مؤتمتة</div></div>
+      <div class="stat"><div class="stat-n">∞</div><div class="stat-l en-only">Projects supported</div><div class="stat-l ar-only">مشروع مدعوم</div></div>
+      <div class="stat"><div class="stat-n">0</div><div class="stat-l en-only">Manual git commands</div><div class="stat-l ar-only">أوامر git يدوية</div></div>
+    </div>
+  </div>
+
+  <hr class="grad-hr" />
+
+  <!-- WHAT IS IT -->
+  <div class="section">
+    <div class="section-tag">Overview</div>
+    <h2 class="en-only">What is GitDeploy?</h2>
+    <h2 class="ar-only">ما هو GitDeploy؟</h2>
+    <p class="en-only">GitDeploy is a PowerShell script that automates the entire GitHub deployment workflow. Instead of running multiple git commands every time you make changes, you just double-click <strong>Deploy.bat</strong> and it handles everything — from checking your internet connection to opening your live site in the browser.</p>
+    <p class="ar-only">GitDeploy سكريبت PowerShell يؤتمت كامل عملية الرفع على GitHub. بدل تشغيل أوامر git يدوياً في كل مرة، فقط دبل كليك على <strong>Deploy.bat</strong> ويتكفل بكل شيء — من فحص الإنترنت حتى فتح موقعك في المتصفح.</p>
+    <p class="en-only">It works with <strong>any project</strong> on your machine. You can reuse the same tool for all your projects — it asks for the project path each time (and remembers it).</p>
+    <p class="ar-only">يعمل مع <strong>أي مشروع</strong> على جهازك. يمكنك إعادة استخدام نفس الأداة لجميع مشاريعك — يطلب مسار المشروع ويتذكره.</p>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="section">
+    <div class="section-tag">Features</div>
+    <h2 class="en-only">What it does</h2>
+    <h2 class="ar-only">ماذا يفعل</h2>
+    <div class="grid">
+      <div class="card" style="--card-c:rgba(87,242,135,.2)">
+        <span class="card-icon">🔍</span>
+        <div class="card-title en-only">Git check</div>
+        <div class="card-title ar-only">فحص git</div>
+        <div class="card-desc en-only">Verifies git is installed before doing anything. Shows version.</div>
+        <div class="card-desc ar-only">يتحقق من تثبيت git قبل أي شيء ويعرض الإصدار.</div>
+      </div>
+      <div class="card" style="--card-c:rgba(88,101,242,.2)">
+        <span class="card-icon">🌐</span>
+        <div class="card-title en-only">Internet check</div>
+        <div class="card-title ar-only">فحص الإنترنت</div>
+        <div class="card-desc en-only">Tests connection to GitHub before attempting to push.</div>
+        <div class="card-desc ar-only">يختبر الاتصال بـ GitHub قبل محاولة الرفع.</div>
+      </div>
+      <div class="card" style="--card-c:rgba(138,43,226,.2)">
+        <span class="card-icon">🔐</span>
+        <div class="card-title en-only">Private identity</div>
+        <div class="card-title ar-only">هوية خاصة</div>
+        <div class="card-desc en-only">Reads your name and email from a separate config file. Email is masked in the terminal.</div>
+        <div class="card-desc ar-only">يقرأ اسمك وبريدك من ملف config منفصل. البريد مخفي في الـ terminal.</div>
+      </div>
+      <div class="card" style="--card-c:rgba(240,165,0,.2)">
+        <span class="card-icon">💾</span>
+        <div class="card-title en-only">Path memory</div>
+        <div class="card-title ar-only">تذكر المسار</div>
+        <div class="card-desc en-only">Remembers the last project path. Press Enter to reuse it next time.</div>
+        <div class="card-desc ar-only">يتذكر آخر مسار مشروع. اضغط Enter لإعادة استخدامه.</div>
+      </div>
+      <div class="card" style="--card-c:rgba(0,212,255,.2)">
+        <span class="card-icon">📋</span>
+        <div class="card-title en-only">Visual diff</div>
+        <div class="card-title ar-only">عرض التغييرات</div>
+        <div class="card-desc en-only">Shows every changed file color-coded: green for new, yellow for modified, red for deleted.</div>
+        <div class="card-desc ar-only">يعرض كل ملف تغيّر بألوان: أخضر للجديد، أصفر للمعدّل، أحمر للمحذوف.</div>
+      </div>
+      <div class="card" style="--card-c:rgba(87,242,135,.2)">
+        <span class="card-icon">📦</span>
+        <div class="card-title en-only">Auto commit</div>
+        <div class="card-title ar-only">commit تلقائي</div>
+        <div class="card-desc en-only">Generates a commit message automatically: <code style="font-size:11px;color:var(--cyan)">deploy(5): +3 ~2 -0 [date]</code></div>
+        <div class="card-desc ar-only">يولّد رسالة commit تلقائياً: <code style="font-size:11px;color:var(--cyan)">deploy(5): +3 ~2 -0 [date]</code></div>
+      </div>
+      <div class="card" style="--card-c:rgba(138,43,226,.2)">
+        <span class="card-icon">🛡️</span>
+        <div class="card-title en-only">Auto .gitignore</div>
+        <div class="card-title ar-only">.gitignore تلقائي</div>
+        <div class="card-desc en-only">Automatically adds private files to .gitignore so they never get pushed.</div>
+        <div class="card-desc ar-only">يضيف الملفات الخاصة لـ .gitignore تلقائياً لمنع رفعها.</div>
+      </div>
+      <div class="card" style="--card-c:rgba(240,165,0,.2)">
+        <span class="card-icon">📝</span>
+        <div class="card-title en-only">Deploy log</div>
+        <div class="card-title ar-only">سجل النشر</div>
+        <div class="card-desc en-only">Saves every deploy to <code style="font-size:11px;color:var(--cyan)">deploy.log</code> with timestamp and file count.</div>
+        <div class="card-desc ar-only">يحفظ كل عملية نشر في <code style="font-size:11px;color:var(--cyan)">deploy.log</code> بالتاريخ وعدد الملفات.</div>
+      </div>
+      <div class="card" style="--card-c:rgba(0,212,255,.2)">
+        <span class="card-icon">🚀</span>
+        <div class="card-title en-only">Auto-open browser</div>
+        <div class="card-title ar-only">فتح المتصفح تلقائياً</div>
+        <div class="card-desc en-only">Opens your GitHub Pages live URL automatically after a successful deploy.</div>
+        <div class="card-desc ar-only">يفتح رابط موقعك على GitHub Pages تلقائياً بعد النشر.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="grad-hr" />
+
+  <!-- FILES -->
+  <div class="section">
+    <div class="section-tag">File Structure</div>
+    <h2 class="en-only">Files in this folder</h2>
+    <h2 class="ar-only">ملفات المجلد</h2>
+    <div class="tree">
+      <span class="tree-folder">GitDeploy/</span><br/>
+      <span class="tree-file">&nbsp;&nbsp;├── Deploy.bat</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-comment">← double-click to run</span><br/>
+      <span class="tree-file">&nbsp;&nbsp;├── Deploy-to-GitHub.ps1</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-comment">← main script (don't edit)</span><br/>
+      <span class="tree-private">&nbsp;&nbsp;├── deploy.config.ps1</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-comment">← YOUR private info (never share)</span><br/>
+      <span class="tree-file">&nbsp;&nbsp;├── README.html</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-comment">← this file</span><br/>
+      <span class="tree-auto">&nbsp;&nbsp;├── .deploy-cache.ps1</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-comment">← auto-created (last path)</span><br/>
+      <span class="tree-auto">&nbsp;&nbsp;└── deploy.log</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tree-comment">← auto-created (history)</span><br/>
+    </div>
+    <div class="warn"><span class="note-icon">🚫</span><span><strong>Never share</strong> <code style="font-family:var(--mono);color:var(--red)">deploy.config.ps1</code> — it contains your email address. The script automatically adds it to <code style="font-family:var(--mono);color:var(--red)">.gitignore</code> in every project.</span></div>
+  </div>
+
+  <!-- SETUP -->
+  <div class="section">
+    <div class="section-tag">Setup</div>
+    <h2 class="en-only">First-time setup</h2>
+    <h2 class="ar-only">الإعداد الأول</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-line"><div class="step-dot">1</div><div class="step-connector"></div></div>
+        <div class="step-body">
+          <div class="step-title en-only">Open deploy.config.ps1</div>
+          <div class="step-title ar-only">افتح deploy.config.ps1</div>
+          <div class="step-desc en-only">Fill in your GitHub username and email address. This is the only file you ever need to edit.</div>
+          <div class="step-desc ar-only">أدخل اسم مستخدم GitHub وبريدك الإلكتروني. هذا الملف الوحيد الذي تحتاج تعديله.</div>
+          <div class="code-block" style="margin-top:10px">
+            <div class="code-label">deploy.config.ps1</div>
+            <span style="color:var(--txt3)">$GIT_USER_NAME</span>  = <span class="arg">"abonebal-code"</span><br/>
+            <span style="color:var(--txt3)">$GIT_USER_EMAIL</span> = <span class="arg">"your@email.com"</span><br/>
+            <span style="color:var(--txt3)">$GIT_BRANCH</span>     = <span class="arg">"main"</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-line"><div class="step-dot">2</div><div class="step-connector"></div></div>
+        <div class="step-body">
+          <div class="step-title en-only">Allow PowerShell scripts (one time only)</div>
+          <div class="step-title ar-only">السماح بتشغيل سكريبتات PowerShell (مرة واحدة)</div>
+          <div class="step-desc en-only">Open PowerShell as Administrator and run:</div>
+          <div class="step-desc ar-only">افتح PowerShell كـ Administrator وشغّل:</div>
+          <div class="code-block" style="margin-top:10px">
+            <span class="prompt">PS&gt; </span><span class="cmd">Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-line"><div class="step-dot">3</div></div>
+        <div class="step-body">
+          <div class="step-title en-only">Double-click Deploy.bat</div>
+          <div class="step-title ar-only">دبل كليك على Deploy.bat</div>
+          <div class="step-desc en-only">That's it. You're ready to deploy any project.</div>
+          <div class="step-desc ar-only">هذا كل شيء. أنت جاهز لنشر أي مشروع.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="grad-hr" />
+
+  <!-- HOW TO USE -->
+  <div class="section">
+    <div class="section-tag">Usage</div>
+    <h2 class="en-only">How to run</h2>
+    <h2 class="ar-only">طريقة التشغيل</h2>
+
+    <table>
+      <tr><th>Method</th><th>How</th></tr>
+      <tr>
+        <td><span class="en-only">Double-click</span><span class="ar-only">دبل كليك</span></td>
+        <td><span class="en-only">Right-click <code>Deploy.bat</code> → Open</span><span class="ar-only">كليك يمين على <code>Deploy.bat</code> ← فتح</span></td>
+      </tr>
+      <tr>
+        <td>Terminal</td>
+        <td><code>powershell -ExecutionPolicy Bypass -File "Deploy-to-GitHub.ps1"</code></td>
+      </tr>
+    </table>
+
+    <div class="note"><span class="note-icon">💡</span><span class="en-only">You can move the entire <strong>GitDeploy</strong> folder anywhere on your PC. All paths inside use the script's own location — nothing will break.</span><span class="ar-only">يمكنك نقل مجلد <strong>GitDeploy</strong> لأي مكان على جهازك. كل المسارات تعمل نسبياً — لن يتعطل أي شيء.</span></div>
+  </div>
+
+  <!-- TERMINAL DEMO -->
+  <div class="section">
+    <div class="section-tag">Demo</div>
+    <h2 class="en-only">What it looks like</h2>
+    <h2 class="ar-only">شكل التشغيل</h2>
+    <div class="terminal">
+      <div class="term-header">
+        <div class="term-dot" style="background:#ed4245"></div>
+        <div class="term-dot" style="background:#f0a500"></div>
+        <div class="term-dot" style="background:#57f287"></div>
+        <div class="term-title">Deploy.bat</div>
+      </div>
+      <div class="term-body">
+        <span class="t-purple">  ================================================================</span><br/>
+        <span class="t-purple">    Deploy to GitHub                              v2.0          </span><br/>
+        <span class="t-purple">    Developed by <span style="color:#fff">Abonebal</span>                                    </span><br/>
+        <span class="t-purple">    (c) 2026 Abonebal -- All rights reserved                    </span><br/>
+        <span class="t-purple">  ================================================================</span><br/><br/>
+        <span class="t-step">  &gt;&gt; 1/7  Checking git</span><br/>
+        <span class="t-ok">     [+]  git version 2.56.0.windows.2</span><br/><br/>
+        <span class="t-step">  &gt;&gt; 2/7  Internet connection</span><br/>
+        <span class="t-ok">     [+]  Connected to GitHub</span><br/><br/>
+        <span class="t-step">  &gt;&gt; 3/7  Git identity</span><br/>
+        <span class="t-ok">     [+]  Name  : abonebal-code</span><br/>
+        <span class="t-ok">     [+]  Email : ab****@gmail.com</span><br/><br/>
+        <span class="t-step">  &gt;&gt; 4/7  Project path</span><br/>
+        <span class="t-dim">     Last used: E:\Abonebal\GitHup-web</span><br/>
+        <span class="t-dim">     Press Enter to reuse, or type a new path</span><br/><br/>
+        <span class="t-dim">     Path: </span><span style="color:#fff">_</span><br/><br/>
+        <span class="t-step">  &gt;&gt; 6/7  Changes</span><br/><br/>
+        <span class="t-file-m">     M  assets/js/visitors.js  modified</span><br/>
+        <span class="t-file-m">     M  assets/js/projects.js  modified</span><br/>
+        <span class="t-file-a">     A  showcases/new-project.html  new</span><br/><br/>
+        <span class="t-ok">     +1 new  ~2 modified  -0 deleted</span><br/><br/>
+        <span class="t-step">  &gt;&gt; 7/7  Deploying</span><br/>
+        <span class="t-ok">     [+]  Committed</span><br/>
+        <span class="t-ok">     [+]  Pushed to origin/main</span><br/><br/>
+        <span class="t-purple">  ================================================================</span><br/>
+        <span class="t-ok">    Deployed successfully!</span><br/>
+        <span class="t-purple">  ================================================================</span><br/><br/>
+        <span style="color:#fff;font-weight:700">     Live URL:</span><br/>
+        <span class="t-url">       https://abonebal-code.github.io/bot-settings-guide-html/</span><br/>
+      </div>
+    </div>
+  </div>
+
+  <hr class="grad-hr" />
+
+  <!-- CONFIG REFERENCE -->
+  <div class="section">
+    <div class="section-tag">Configuration</div>
+    <h2 class="en-only">deploy.config.ps1 reference</h2>
+    <h2 class="ar-only">مرجع deploy.config.ps1</h2>
+    <table>
+      <tr><th><span class="en-only">Variable</span><span class="ar-only">المتغير</span></th><th><span class="en-only">Description</span><span class="ar-only">الوصف</span></th><th><span class="en-only">Example</span><span class="ar-only">مثال</span></th></tr>
+      <tr><td><code>$GIT_USER_NAME</code></td><td><span class="en-only">Your GitHub username</span><span class="ar-only">اسم مستخدم GitHub</span></td><td><code>"abonebal-code"</code></td></tr>
+      <tr><td><code>$GIT_USER_EMAIL</code></td><td><span class="en-only">Email linked to GitHub account</span><span class="ar-only">البريد المرتبط بحساب GitHub</span></td><td><code>"you@email.com"</code></td></tr>
+      <tr><td><code>$GIT_BRANCH</code></td><td><span class="en-only">Branch to push to</span><span class="ar-only">الـ branch للرفع إليه</span></td><td><code>"main"</code></td></tr>
+    </table>
+  </div>
+
+  <!-- FAQ -->
+  <div class="section">
+    <div class="section-tag">FAQ</div>
+    <h2 class="en-only">Common questions</h2>
+    <h2 class="ar-only">أسئلة شائعة</h2>
+
+    <div class="note"><span class="note-icon">❓</span><span><strong class="en-only">It says "not a git repository"</strong><strong class="ar-only">يقول "not a git repository"</strong><br/><span class="en-only">The script will initialize git automatically and ask for your GitHub URL. Paste the repo link and it continues.</span><span class="ar-only">السكريبت سيهيئ git تلقائياً ويطلب رابط الريبو. الصق الرابط ويكمل.</span></span></div>
+    <div class="note"><span class="note-icon">❓</span><span><strong class="en-only">Push failed / rejected</strong><strong class="ar-only">فشل الـ push</strong><br/><span class="en-only">The script will ask if you want to force push. Type <code style="font-family:var(--mono)">y</code> to proceed.</span><span class="ar-only">السكريبت سيسألك عن force push. اكتب <code style="font-family:var(--mono)">y</code> للمتابعة.</span></span></div>
+    <div class="note"><span class="note-icon">❓</span><span><strong class="en-only">How to use with a different project?</strong><strong class="ar-only">كيف أستخدمه مع مشروع آخر؟</strong><br/><span class="en-only">Just run Deploy.bat again and enter the new project path. The script remembers it for next time.</span><span class="ar-only">شغّل Deploy.bat مرة أخرى وأدخل مسار المشروع الجديد. يتذكره للمرة القادمة.</span></span></div>
+    <div class="warn"><span class="note-icon">⚠️</span><span><strong class="en-only">GitHub Pages not updating?</strong><strong class="ar-only">الموقع لا يتحدث؟</strong><br/><span class="en-only">Go to your repo → Settings → Pages → make sure Branch is set to <code style="font-family:var(--mono)">main</code> → Save.</span><span class="ar-only">روح للريبو → Settings → Pages → تأكد أن Branch محدد على <code style="font-family:var(--mono)">main</code> → Save.</span></span></div>
+  </div>
+
+  <hr class="grad-hr" />
+
+  <!-- DISCORD CTA -->
+  <div class="discord-cta">
+    <p class="en-only">Have a question or need help? Reach out directly on Discord.</p>
+    <p class="ar-only">هل لديك سؤال أو تحتاج مساعدة؟ تواصل معي مباشرة عبر Discord.</p>
+    <button class="btn-discord" onclick="openDiscord()">
+      <span class="btn-discord-icon">🎮</span>
+      <span class="en-only">Contact on Discord</span>
+      <span class="ar-only">تواصل عبر Discord</span>
+    </button>
+  </div>
+
+  <hr class="grad-hr" />
+
+  <footer>
+    <div class="footer-name">GitDeploy</div>
+    <div style="font-size:13px;color:var(--txt3);margin-top:6px">
+      <span class="en-only">Auto-deploy tool for GitHub Pages</span>
+      <span class="ar-only">أداة نشر تلقائية لـ GitHub Pages</span>
+    </div>
+    <div class="footer-copy">© 2026 <span>Abonebal</span> — <span class="en-only">All rights reserved</span><span class="ar-only">جميع الحقوق محفوظة</span></div>
+  </footer>
+
+</div>
+
+<script>
+// ── Discord deep link ─────────────────────────────────────────
+const DISCORD_USER_ID = '652265859905093652';
+
+function openDiscord() {
+  // Try opening Discord app first
+  window.location.href = 'discord://-/users/' + DISCORD_USER_ID;
+  // After 1.5s fallback to web if app didn't open
+  setTimeout(function() {
+    window.open('https://discord.com/users/' + DISCORD_USER_ID, '_blank');
+  }, 1500);
+}
+
+// ── Language toggle ──────────────────────────────────────────
+function setLang(lang) {
+  document.documentElement.lang = lang;
+  document.documentElement.dir  = lang === 'ar' ? 'rtl' : 'ltr';
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+  localStorage.setItem('readme-lang', lang);
+}
+
+// Apply saved language on load
+(function() {
+  var saved = localStorage.getItem('readme-lang') || 'en';
+  setLang(saved);
+})();
+</script>
+
+</body>
+</html>
