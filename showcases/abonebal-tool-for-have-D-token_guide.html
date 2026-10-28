@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دليل استخدام أداة Abonebal</title>
+    <style>
+        :root {
+            --bg-color: #0b0b14;
+            --panel-bg: #141424;
+            --primary: #ff00ff;
+            --secondary: #00ffcc;
+            --text: #ffffff;
+            --muted: #a0a0b8;
+            --code-bg: #09090f;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--panel-bg);
+            border: 1px solid #252542;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #252542;
+            padding-bottom: 20px;
+        }
+
+        header h1 {
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(255,0,255,0.3);
+            margin: 0 0 10px 0;
+        }
+
+        header p {
+            color: var(--secondary);
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #252542;
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--muted);
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 8px;
+        }
+
+        .tab-btn.active {
+            color: var(--text);
+            background-color: var(--primary);
+            box-shadow: 0 0 10px rgba(255,0,255,0.4);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .step {
+            margin-bottom: 25px;
+            background: #1a1a2e;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .step-number {
+            background-color: var(--primary);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .step-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text);
+        }
+
+        .mock-ui {
+            background-color: var(--code-bg);
+            border: 1px solid #252542;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: monospace;
+            direction: ltr;
+            text-align: left;
+            margin-top: 15px;
+            position: relative;
+        }
+
+        .mock-field {
+            margin-bottom: 10px;
+            color: #d8dee9;
+        }
+
+        .mock-label {
+            color: #81a1c1;
+        }
+
+        .code-box {
+            border: 1px dashed var(--secondary);
+            padding: 10px;
+            border-radius: 6px;
+            color: #a3be8c;
+            overflow-x: auto;
+            white-space: nowrap;
+            background: #11111b;
+        }
+
+        .btn-copy {
+            background-color: var(--secondary);
+            color: #0b0b14;
+            border: none;
+            padding: 8px 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .btn-copy:hover {
+            opacity: 0.9;
+            box-shadow: 0 0 10px rgba(0,255,204,0.4);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #00ff00;
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,255,0,0.3);
+            transition: bottom 0.3s ease;
+            z-index: 10000;
+        }
+
+        .toast.show {
+            bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>ABONEBAL UTILITY SYSTEM</h1>
+        <p>دليل الاستخدام الرسمي والمجاني لتشغيل أداة استخراج التوكن</p>
+    </header>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('bookmark')">طريقة العلامات الفورية (بدون ملفات)</button>
+        <button class="tab-btn" onclick="switchTab('extension')">طريقة حقن الإضافة كـ Extension</button>
+    </div>
+
+    <!-- تبويب العلامات المرجعية -->
+    <div id="bookmark-content" class="tab-content active">
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <div class="step-title">إنشاء إشارة مرجعية جديدة</div>
+            </div>
+            <p style="margin: 0; color: var(--muted); font-size: 14px;">قم بحفظ أي صفحة عشوائية في علامات المتصفح بالضغط على النجمة أو واختصار لوحة المفاتيح <span style="color:var(--primary)">Ctrl + D</span> ثم اضغط على تعديل أو "المزيد".</p>
+        </div>
+
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <div class="step-title">تعديل وحقن الكود</div>
+            </div>
+            <p style="margin: 0 0 15px 0; color: var(--muted); font-size: 14px;">قم بتسمية الإشارة باسم <span style="color: var(--secondary)">Abonebal Tool</span>، ثم امسح الرابط الموجود تماماً وضع كود الـ JavaScript البرمجي مكانه باستخدام زر النسخ بالأسفل.</p>
+            
+            <div class="mock-ui">
+                <div class="mock-field"><span class="mock-label">Name / الاسم :</span> Abonebal Tool</div>
+                <div class="mock-field"><span class="mock-label">URL / الرابط :</span></div>
+                <div class="code-box">...javascript:(function(){let t="";try{const e=document.createElement("iframe")...</div>
+                
+                <button class="btn-copy" onclick="copyActionCode()">نسخ الكود البرمجي 📋</button>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <div class="step-title">التشغيل واستخراج التوكن</div>
+            </div>
+            <p style="margin: 0; color: var(--muted); font-size: 14px;">توجه الآن إلى علامة تبويب موقع <span style="color: var(--primary)">ديسكورد الرسمي</span> وسجل دخولك، ثم اضغط على زر الأداة الذي حفظته في شريط العلامات المرجعية العلوي لتنبثق لك الواجهة فوراً.</p>
+        </div>
+    </div>
+
+    <!-- تبويب الإضافة -->
+    <div id="extension-content" class="tab-content">
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <div class="step-title">تجهيز ملفات الأداة</div>
+            </div>
+            <p style="margin: 0; color: var(--muted); font-size: 14px;">تأكد من إنشاء مجلد على جهازك يحتوي على ملف الـ <span style="color:var(--secondary)">manifest.json</span> وملف الـ <span style="color:var(--secondary)">background.js</span> بالإضافة إلى صورة الشعار الخاصة بك باسم <span style="color:var(--secondary)">icon.png</span>.</p>
+        </div>
+
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <div class="step-title">تفعيل وضع المطور بالمتصفح</div>
+            </div>
+            <p style="margin: 0; color: var(--muted); font-size: 14px;">افتح علامة تبويب جديدة واذهب إلى الرابط: <span style="color:var(--primary)">chrome://extensions/</span> ثم قم بتفعيل زر **وضع المطور (Developer mode)** في أعلى اليمين.</p>
+        </div>
+
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <div class="step-title">تحميل الإضافة والتشغيل</div>
+            </div>
+            <p style="margin: 0; color: var(--muted); font-size: 14px;">اضغط على زر **Load unpacked** واختر مجلد الأداة لتركيبها. بعد ذلك، افتح ديسكورد واضغط على أيقونة الأداة الفخمة بأعلى المتصفح ليظهر لك لوحة التحكم المباشرة.</p>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast">تم نسخ الكود بنجاح! جاهز للصقه الآن في خانة الـ URL ✓</div>
+
+<script>
+    const targetCode = `javascript:(function(){let t="";try{const e=document.createElement("iframe");document.body.appendChild(e),t=e.contentWindow.localStorage.token?e.contentWindow.localStorage.token.replace(/"/g,""):"",e.remove()}catch(t){}if(!t)try{let e=window.webpackChunkdiscord_app;e&&e.push([[Symbol()],{},n=>{try{Object.values(n.c).some(e=>{if(e.exports?.setToken&&"function"==typeof e.exports.getToken)return t=e.exports.getToken(),!0})}catch(t){}}])}catch(t){}const e=document.getElementById("abonebal-extension-panel");e&&e.remove();const n=document.createElement("div");n.id="abonebal-extension-panel",n.style.position="fixed",n.style.top="50%",n.style.left="50%",n.style.transform="translate(-50%, -50%)",n.style.backgroundColor="#1e1e2e",n.style.border="2px solid #ff00ff",n.style.borderRadius="12px",n.style.padding="25px",n.style.zIndex="99999",n.style.boxShadow="0 0 25px rgba(255, 0, 255, 0.5)",n.style.fontFamily="Segoe UI, sans-serif",n.style.color="#ffffff",n.style.textAlign="center",n.style.width="380px",n.innerHTML=\`\n    <h2 style="margin: 0 0 10px 0; color: #ff00ff; font-size: 20px; text-shadow: 0 0 8px #ff00ff;">ABONEBAL SYSTEM v2.8</h2>\n    <p style="margin: 0 0 20px 0; color: #00ffcc; font-size: 13px;">تم استخراج التوكن بنجاح مجانًا</p>\n    <input type="text" id="abonebalTokenInput" value="\${t?t:"يرجى تحديث الصفحة والمحاولة مجدداً"}" readonly \n        style="width: 100%; padding: 10px; background: #11111b; border: 1px solid #444; border-radius: 6px; color: #ffff00; text-align: center; font-size: 12px; margin-bottom: 15px; box-sizing: border-box;">\n    <button id="abonebalCopyBtn" style="background: #00ffcc; color: #111; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-right: 10px;">نسخ التوكن</button>\n    <button id="abonebalCloseBtn" style="background: #ff4545; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer;">إغلاق</button>\n  \`,document.body.appendChild(n),document.getElementById("abonebalCopyBtn").onclick=function(){t&&(navigator.clipboard.writeText(t),this.innerText="تم النسخ! ✓",this.style.backgroundColor="#00ff00",setTimeout(()=>{this.innerText="نسخ التوكن",this.style.backgroundColor="#00ffcc"},2e3))},document.getElementById("abonebalCloseBtn").onclick=function(){n.remove()}})();`;
+
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        
+        if(tabName === 'bookmark') {
+            document.querySelector('button[onclick="switchTab(\'bookmark\')"]').classList.add('active');
+            document.getElementById('bookmark-content').classList.add('active');
+        } else {
+            document.querySelector('button[onclick="switchTab(\'extension\')"]').classList.add('active');
+            document.getElementById('extension-content').classList.add('active');
+        }
+    }
+
+    function copyActionCode() {
+        navigator.clipboard.writeText(targetCode).then(() => {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        });
+    }
+</script>
+</body>
+</html>
